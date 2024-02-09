@@ -9,8 +9,8 @@ model Transaction {
     user_id         String
     type            String
     description     String?
-    in              Decimal         @db.Money
-    out             Decimal         @db.Money
+    in              BigInt
+    out             BigInt
 
     deleted_at      DateTime?
     created_at      DateTime        @default(now())

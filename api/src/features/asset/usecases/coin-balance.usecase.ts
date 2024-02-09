@@ -1,6 +1,7 @@
 import { BaseUsecase } from "@/common/shared/usecase";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Account } from "@prisma/client";
+import BigNumber from "bignumber.js";
 
 type CoinBalanceUsecaseProps = {
     asset_id: string;
@@ -43,7 +44,7 @@ export class CoinBalanceUsecase extends BaseUsecase<Promise<any>> {
             }
         });
         const { in: inAmount, out: outAmount } = aggregate;
-        const balance = inAmount.sub(outAmount);
+        const balance = BigNumber(inAmount.toString()).minus(BigNumber(outAmount.toString()));
         
         return {
             asset,
