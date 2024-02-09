@@ -21,6 +21,7 @@ export default async function account () {
         symbol
     }) => ({
         name: String(name),
-        symbol: String(symbol)
+        symbol: String(symbol),
+        decimals: 18,
     }))
 }

@@ -108,8 +108,9 @@ model AssetPosition {
 model Asset {
   id String @id @default(uuid())
 
-  name   String
-  symbol String
+  name     String
+  symbol   String
+  decimals Int
 
   deleted_at DateTime?
   created_at DateTime  @default(now())
