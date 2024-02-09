@@ -1,26 +1,37 @@
-import { Module } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
+import { MODULE as JwtModule } from "@/common/providers/jwt.provider";
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from '@/common/middlewares/jwt.strategy';
+import { APP_GUARDS } from '@/common/constants/provider';
 
 // @features
 import { AuthenticationModule } from '@/features/authentication/authentication.module';
 import { AssetModule } from '@/features/asset/asset.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
-  imports: [
-    CacheModule.register({
-      isGlobal: true,
-    }),
+	imports: [
+		PassportModule,
+		JwtModule,
+		CacheModule.register({
+			isGlobal: true,
+		}),
 
-    AuthenticationModule,
-    AssetModule,
-  ],
-  controllers: [],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    }
-  ],
+		AuthenticationModule,
+		AssetModule,
+	],
+	controllers: [],
+	providers: ([
+		JwtStrategy,
+	] as Provider[]).concat(APP_GUARDS.map((useClass) => ({
+		provide: APP_GUARD,
+		useClass,
+	})) as []).concat([
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: CacheInterceptor,
+		}
+	]),
 })
-export class AppModule {}
+export class AppModule { }

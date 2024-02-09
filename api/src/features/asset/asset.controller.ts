@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Query } from "@nestjs/common";
 import { CacheKey, CacheTTL } from "@nestjs/cache-manager";
-import { ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { CoinListingUsecase } from "./usecases/coin-listing.usecase";
 import { ZERO_UUID } from "@/common/constants/uuid";
 import { CoinBalanceUsecase } from "./usecases/coin-balance.usecase";
@@ -31,6 +31,7 @@ export class AssetController {
         });
     }
 
+    @ApiBearerAuth()
     @Get(':asset_id/balance')
     @ApiOperation({ summary: 'Get coin balance' })
     @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
