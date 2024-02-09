@@ -3,7 +3,7 @@ import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
 
 // @features
 import { AuthenticationModule } from '@/features/authentication/authentication.module';
-import { PortfolioModule } from '@/features/portfolio/portfolio.module';
+import { AssetModule } from '@/features/asset/asset.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
@@ -13,7 +13,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     }),
 
     AuthenticationModule,
-    PortfolioModule,
+    AssetModule,
   ],
   controllers: [],
   providers: [

@@ -7,9 +7,9 @@ import { CoinBalanceUsecase } from "./usecases/coin-balance.usecase";
 import { AuthSession } from "@/common/decorators/auth-session";
 import { Account } from "@prisma/client";
 
-@Controller('portfolio')
-@ApiTags('Portfolio')
-export class PortfolioController {
+@Controller('asset')
+@ApiTags('Asset')
+export class AssetController {
     constructor (
         private readonly coinListingUsecase: CoinListingUsecase,
         private readonly coinBalanceUsecase: CoinBalanceUsecase,
