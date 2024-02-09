@@ -27,8 +27,11 @@ generator client {
 model Account {
   id String @id @default(uuid())
 
-  email          String? @unique
-  wallet_account String  @unique
+  first_name String
+  last_name  String
+  username   String  @unique
+  email      String? @unique
+  password   String
 
   verified_at DateTime?
   deleted_at  DateTime?
@@ -39,7 +42,7 @@ model Account {
   favorite_assets AssetFavorite[] @relation("asset_favorite_account")
   transactions    Transaction[]   @relation("transaction_account")
 
-  @@unique([email, wallet_account])
+  @@index([username, email])
   @@map("account")
 }
 

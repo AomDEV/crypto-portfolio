@@ -1,8 +1,8 @@
 import { BaseUsecase } from "@/common/shared/usecase";
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { LoginDTO } from "../dto/login.dto";
-import { ZeroAddress, ethers } from "ethers";
-import { prisma } from "@/common/shared/prisma";
+import * as bcrypt from 'bcrypt';
+import * as moment from 'moment';
 import { JwtService } from "@nestjs/jwt";
 
 type LoginUsecaseProps = {
@@ -20,29 +20,26 @@ export class LoginUsecase extends BaseUsecase<Promise<any>> {
     async execute ({
         body,
     }: LoginUsecaseProps) {
-        const { wallet_address, message, signature } = body;
-        const recovered = ethers.recoverAddress(message, signature);
-
-        if (recovered !== wallet_address) throw new ForbiddenException('Invalid signature');
-
-        let account = await prisma.account.findUnique({
+        const { username, password } = body;
+        const account = await this.prismaService.account.findFirst({
             where: {
-                wallet_account: wallet_address,
+                username,
                 deleted_at: null,
             },
         });
-        if (!account) account = await prisma.account.create({
-            data: {
-                wallet_account: wallet_address,
-                created_at: new Date(),
-                deleted_at: null,
-            },
-        });
-        
-        return this.jwtService.sign({
+        if (!account) throw new ForbiddenException('Invalid username or password');
+
+        const isPasswordValid = await bcrypt.compare(password, account.password);
+        if (!isPasswordValid) throw new ForbiddenException('Invalid username or password');
+
+        const user_id = account.id;
+        const expires_in = moment().add(3, 'hours').toDate();
+        const access_token = await this.jwtService.signAsync({
             user_id: account.id,
         }, {
-            secret: process.env.JWT_SECRET,
+            expiresIn: '3h',
+            secret: process.env.JWT_ACCESS_SECRET,
         });
+        return { user_id, access_token, expires_in }
     }
 }
