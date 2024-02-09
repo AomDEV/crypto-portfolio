@@ -1,13 +1,18 @@
-import { Controller, Get, ParseIntPipe, Query } from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Query } from "@nestjs/common";
 import { CacheKey, CacheTTL } from "@nestjs/cache-manager";
-import { ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { CoinListingUsecase } from "./usecases/coin-listing.usecase";
+import { ZERO_UUID } from "@/common/constants/uuid";
+import { CoinBalanceUsecase } from "./usecases/coin-balance.usecase";
+import { AuthSession } from "@/common/decorators/auth-session";
+import { Account } from "@prisma/client";
 
 @Controller('portfolio')
 @ApiTags('Portfolio')
 export class PortfolioController {
     constructor (
         private readonly coinListingUsecase: CoinListingUsecase,
+        private readonly coinBalanceUsecase: CoinBalanceUsecase,
     ) {}
 
     @Get('listing')
@@ -23,6 +28,19 @@ export class PortfolioController {
         return this.coinListingUsecase.execute({
             page,
             limit,
+        });
+    }
+
+    @Get(':asset_id/balance')
+    @ApiOperation({ summary: 'Get coin balance' })
+    @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
+    async balance (
+        @Param('asset_id', ParseUUIDPipe) asset_id: string,
+        @AuthSession() session: Account,
+    ) {
+        return this.coinBalanceUsecase.execute({
+            asset_id,
+            session,
         });
     }
 }
