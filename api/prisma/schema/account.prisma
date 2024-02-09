@@ -1,0 +1,22 @@
+import { Position } from "position"
+import { AssetFavorite } from "asset_favorite"
+import { Transaction } from "transaction"
+
+model Account {
+    id              String          @id @default(uuid())
+    
+    email           String?         @unique
+    wallet_account  String          @unique
+
+    verified_at     DateTime?
+    deleted_at      DateTime?
+    created_at      DateTime        @default(now())
+    updated_at      DateTime        @updatedAt
+
+    positions       AssetPosition[] @relation("asset_position_account")
+    favorite_assets AssetFavorite[] @relation("asset_favorite_account")
+    transactions    Transaction[]   @relation("transaction_account")
+
+    @@unique([email, wallet_account])
+    @@map("account")
+}

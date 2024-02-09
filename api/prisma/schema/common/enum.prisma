@@ -1,0 +1,8 @@
+enum EDirection {
+    LONG
+    SHORT
+}
+enum EPositionStatus {
+    OPEN
+    CLOSE
+}

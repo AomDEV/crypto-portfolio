@@ -1,0 +1,20 @@
+import { AssetFavorite } from "asset_favorite"
+import { AssetPosition } from "asset_position"
+import { Transaction } from "transaction"
+
+model Asset {
+    id              String          @id @default(uuid())
+
+    name            String
+    symbol          String
+
+    deleted_at      DateTime?
+    created_at      DateTime        @default(now())
+    updated_at      DateTime        @updatedAt
+
+    favorites       AssetFavorite[] @relation("asset_favorite_asset")
+    positions       AssetPosition[] @relation("asset_position_asset")
+    transactions    Transaction[]   @relation("transaction_asset")
+
+    @@map("asset")
+}

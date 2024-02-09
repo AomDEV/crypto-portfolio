@@ -1,0 +1,25 @@
+import { Asset } from "asset"
+import { Account } from "account"
+import { AssetPosition } from "asset_position"
+
+model Transaction {
+    id              String          @id @default(uuid())
+
+    asset_id        String
+    user_id         String
+    type            String
+    description     String?
+    in              Decimal         @db.Money
+    out             Decimal         @db.Money
+
+    deleted_at      DateTime?
+    created_at      DateTime        @default(now())
+    updated_at      DateTime        @updatedAt
+
+    asset           Asset           @relation("transaction_asset", fields: [asset_id], references: [id])
+    user            Account         @relation("transaction_account", fields: [user_id], references: [id])
+    in_position     AssetPosition[] @relation("asset_position_in_tx")
+    out_position    AssetPosition[] @relation("asset_position_out_tx")
+
+    @@map("transaction")
+}

@@ -1,0 +1,1 @@
+export type NestRequest = Request & Record<string, any>;

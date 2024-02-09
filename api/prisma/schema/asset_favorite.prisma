@@ -1,0 +1,19 @@
+import { Account } from "account"
+import { Asset } from "asset
+
+model AssetFavorite {
+    id              String          @id @default(uuid())
+    
+    asset_id        String
+    user_id         String
+
+    deleted_at      DateTime?
+    created_at      DateTime        @default(now())
+    updated_at      DateTime        @updatedAt
+
+    user            Account         @relation("asset_favorite_account", fields: [user_id], references: [id])
+    asset           Asset           @relation("asset_favorite_asset", fields: [asset_id], references: [id])
+
+    @@unique([asset_id, user_id])
+    @@map("asset_favorite")
+}
