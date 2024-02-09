@@ -22,8 +22,8 @@ export class AssetController {
 
     @Get('listing')
     @ApiOperation({ summary: 'Get coin listing' })
-    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-    @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+    @ApiQuery({ name: 'page', required: true, type: Number, example: 1 })
+    @ApiQuery({ name: 'limit', required: true, type: Number, example: 10 })
     @CacheKey('listing')
     @CacheTTL(60*1000)
     async listing (
