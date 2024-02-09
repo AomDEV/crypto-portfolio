@@ -8,9 +8,14 @@ import { JwtService } from "@nestjs/jwt";
 type LoginUsecaseProps = {
     body: LoginDTO
 };
+type LoginUsecaseResponse = {
+    user_id: string,
+    access_token: string,
+    expires_in: Date,
+};
 
 @Injectable()
-export class LoginUsecase extends BaseUsecase<Promise<any>> { 
+export class LoginUsecase extends BaseUsecase<Promise<LoginUsecaseResponse>> { 
     constructor (
         private readonly jwtService: JwtService
     ) {
