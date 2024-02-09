@@ -89,6 +89,7 @@ model AssetPosition {
   open_tx_id  String  @unique
   close_tx_id String? @unique
 
+  exited_at  DateTime?
   deleted_at DateTime?
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt

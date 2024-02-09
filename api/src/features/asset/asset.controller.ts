@@ -8,6 +8,7 @@ import { AuthSession } from "@/common/decorators/auth-session";
 import { Account } from "@prisma/client";
 import { OpenPositionUsecase } from "./usecases/open-position.usecase";
 import { OpenPositionDTO } from "./dto/open-position.dto";
+import { GetPositionUsecase } from "./usecases/get-position.usecase";
 
 @Controller('asset')
 @ApiTags('Asset')
@@ -15,6 +16,7 @@ export class AssetController {
     constructor (
         private readonly coinListingUsecase: CoinListingUsecase,
         private readonly coinBalanceUsecase: CoinBalanceUsecase,
+        private readonly getPositionUsecase: GetPositionUsecase,
         private readonly openPositionUsecase: OpenPositionUsecase,
     ) {}
 
@@ -44,6 +46,26 @@ export class AssetController {
     ) {
         return this.coinBalanceUsecase.execute({
             asset_id,
+            session,
+        });
+    }
+
+    @ApiBearerAuth()
+    @Get(':asset_id/position')
+    @ApiOperation({ summary: 'Get coin position' })
+    @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
+    @ApiQuery({ name: 'page', required: true, type: Number, example: 1 })
+    @ApiQuery({ name: 'limit', required: true, type: Number, example: 10 })
+    async position (
+        @Param('asset_id', ParseUUIDPipe) asset_id: string,
+        @Query('page', ParseIntPipe) page: number,
+        @Query('limit', ParseIntPipe) limit: number,
+        @AuthSession() session: Account,
+    ) {
+        return this.getPositionUsecase.execute({
+            asset_id,
+            page,
+            limit,
             session,
         });
     }
