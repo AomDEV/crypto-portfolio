@@ -2,12 +2,15 @@ import { Body, Controller, Post } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { LoginDTO } from "./dto/login.dto";
 import { LoginUsecase } from "./usecases/login.usecase";
+import { RegisterDTO } from "./dto/register.dto";
+import { RegisterUsecase } from "./usecases/register.usecase";
 
 @Controller('authentication')
 @ApiTags('Authentication')
 export class AuthenticationController {
     constructor (
         private readonly loginUsecase: LoginUsecase,
+        private readonly registerUsecase: RegisterUsecase,
     ) {}
     
     @Post('login')
@@ -17,5 +20,14 @@ export class AuthenticationController {
         @Body() body: LoginDTO
     ) {
         return this.loginUsecase.execute({ body });
+    }
+
+    @Post('register')
+    @ApiOperation({ summary: 'Register' })
+    @ApiBody({ type: RegisterDTO })
+    async register (
+        @Body() body: RegisterDTO
+    ) {
+        return this.registerUsecase.execute({ body });
     }
 }
