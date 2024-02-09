@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Post, Query } from "@nestjs/common";
 import { CacheKey, CacheTTL } from "@nestjs/cache-manager";
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { CoinListingUsecase } from "./usecases/coin-listing.usecase";
@@ -6,6 +6,8 @@ import { ZERO_UUID } from "@/common/constants/uuid";
 import { CoinBalanceUsecase } from "./usecases/coin-balance.usecase";
 import { AuthSession } from "@/common/decorators/auth-session";
 import { Account } from "@prisma/client";
+import { OpenPositionUsecase } from "./usecases/open-position.usecase";
+import { OpenPositionDTO } from "./dto/open-position.dto";
 
 @Controller('asset')
 @ApiTags('Asset')
@@ -13,6 +15,7 @@ export class AssetController {
     constructor (
         private readonly coinListingUsecase: CoinListingUsecase,
         private readonly coinBalanceUsecase: CoinBalanceUsecase,
+        private readonly openPositionUsecase: OpenPositionUsecase,
     ) {}
 
     @Get('listing')
@@ -41,6 +44,22 @@ export class AssetController {
     ) {
         return this.coinBalanceUsecase.execute({
             asset_id,
+            session,
+        });
+    }
+
+    @ApiBearerAuth()
+    @Post(':asset_id/position/open')
+    @ApiOperation({ summary: 'Open position' })
+    @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
+    async openPosition (
+        @Param('asset_id', ParseUUIDPipe) asset_id: string,
+        @Body() body: OpenPositionDTO,
+        @AuthSession() session: Account,
+    ) {
+        return this.openPositionUsecase.execute({
+            asset_id,
+            body,
             session,
         });
     }

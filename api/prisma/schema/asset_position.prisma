@@ -11,14 +11,15 @@ model AssetPosition {
 
     leverage        Int
     direction       EDirection      @default(LONG)
-    open_position   Float
-    close_position  Float?
+    amount          BigInt
+    entry_price     Decimal         @db.Money
+    exit_price      Decimal?        @db.Money
     profit          Float?
     
     status          EPositionStatus @default(OPEN)
 
-    in_tx_id        String?
-    out_tx_id       String?
+    open_tx_id      String          @unique
+    close_tx_id     String?         @unique
 
     deleted_at      DateTime?
     created_at      DateTime        @default(now())
@@ -26,8 +27,8 @@ model AssetPosition {
 
     user            Account         @relation("asset_position_account", fields: [user_id], references: [id])
     asset           Asset           @relation("asset_position_asset", fields: [asset_id], references: [id])
-    in_tx           Transaction?    @relation("asset_position_in_tx", fields: [in_tx_id], references: [id])
-    out_tx          Transaction?    @relation("asset_position_out_tx", fields: [out_tx_id], references: [id])
+    open_tx         Transaction     @relation("asset_position_open_tx", fields: [open_tx_id], references: [id])
+    close_tx        Transaction?    @relation("asset_position_close_tx", fields: [close_tx_id], references: [id])
 
     @@index([asset_id, user_id])
     @@map("asset_position")

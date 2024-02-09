@@ -18,8 +18,8 @@ model Transaction {
 
     asset           Asset           @relation("transaction_asset", fields: [asset_id], references: [id])
     user            Account         @relation("transaction_account", fields: [user_id], references: [id])
-    in_position     AssetPosition[] @relation("asset_position_in_tx")
-    out_position    AssetPosition[] @relation("asset_position_out_tx")
+    open_position   AssetPosition?  @relation("asset_position_open_tx")
+    close_position  AssetPosition?  @relation("asset_position_close_tx")
 
     @@map("transaction")
 }

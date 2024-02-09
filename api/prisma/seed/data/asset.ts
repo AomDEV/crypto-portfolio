@@ -1,14 +1,8 @@
-import axios from "axios"
+import { cmc } from "../client";
+
 
 export default async function account () {
-    const apiUrl = String(process.env.CMC_API_URL);
-    const api = axios.create({
-        baseURL: apiUrl,
-        headers: {
-            'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY,
-        }
-    });
-    const response = await api.get(`/v1/cryptocurrency/listings/latest`, {
+    const response = await cmc().get(`/v1/cryptocurrency/listings/latest`, {
         params: {
             start: 1,
             limit: 100,

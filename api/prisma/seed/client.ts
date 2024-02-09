@@ -1,4 +1,5 @@
 import { PrismaClient, Prisma } from '@prisma/client';
+import axios from "axios"
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
@@ -36,4 +37,13 @@ export class Seed {
         console.log(`Seeding ${this.$transactions.length} models...`);
         return this.prisma.$transaction(this.$transactions);
     }
+}
+export function cmc () {
+    const apiUrl = String(process.env.CMC_API_URL);
+    return axios.create({
+        baseURL: apiUrl,
+        headers: {
+            'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY,
+        }
+    });
 }
