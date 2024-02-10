@@ -10,6 +10,7 @@ import { APP_GUARDS } from '@/common/constants/provider';
 import { AuthenticationModule } from '@/features/authentication/authentication.module';
 import { AssetModule } from '@/features/asset/asset.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
 	imports: [
@@ -19,6 +20,10 @@ import { ScheduleModule } from '@nestjs/schedule';
 			isGlobal: true,
 		}),
 		ScheduleModule.forRoot(),
+		EventEmitterModule.forRoot({
+			ignoreErrors: false,
+      		verboseMemoryLeak: false,
+		}),
 
 		AuthenticationModule,
 		AssetModule,

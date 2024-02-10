@@ -1,13 +1,16 @@
 import { oxr } from "@/common/shared/api";
 import { BaseUsecase } from "@/common/shared/usecase";
 import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class FetchRateUsecase extends BaseUsecase<Promise<void>> {
     private readonly logger: Logger = new Logger(FetchRateUsecase.name);
 
-    constructor () {
+    constructor (
+        private readonly eventEmitter: EventEmitter2
+    ) {
         super();
     }
 
@@ -40,5 +43,14 @@ export class FetchRateUsecase extends BaseUsecase<Promise<void>> {
         }
         const created = await this.prismaService.$transaction(transactions);
         if (created.length <= 0) throw new ForbiddenException('Failed to create rates');
+
+        const eventName = 'rate.fetched';
+        const listenerCount = this.eventEmitter.listenerCount(eventName);
+        if (listenerCount > 0) {
+            for (const data of created) {
+                const emitter = this.eventEmitter.emit(eventName, data);
+                if (!emitter) throw new ForbiddenException('Failed to send event');
+            }
+        }
     }
 }
