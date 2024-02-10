@@ -1,7 +1,6 @@
-import { ZERO_UUID } from "@/common/constants/uuid";
 import { ApiProperty } from "@nestjs/swagger";
 import { EDirection } from "@prisma/client";
-import { IsDefined, IsEnum, IsNumber, IsNumberString, IsUUID, Max, Min } from "class-validator";
+import { IsDefined, IsEnum, IsNumber, IsNumberString, Max, Min } from "class-validator";
 
 export class OpenPositionDTO {
     @ApiProperty({ type: Number, description: 'Leverage', example: 1 })
