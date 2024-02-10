@@ -1,10 +1,11 @@
 import { coincap } from "@/common/shared/api";
 import { prisma } from "@/common/shared/prisma";
 import { BaseUsecase } from "@/common/shared/usecase";
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
 
 @Injectable()
 export class FetchQuoteUsecase extends BaseUsecase<Promise<void>> {
+    private readonly logger: Logger = new Logger(FetchQuoteUsecase.name);
     constructor () {
         super();
     }
@@ -48,5 +49,6 @@ export class FetchQuoteUsecase extends BaseUsecase<Promise<void>> {
             })),
         });
         if (created.count <= 0) throw new ForbiddenException('Failed to create quotes');
+        this.logger.log(`Fetched ${created.count} quotes`);
     }
 }
