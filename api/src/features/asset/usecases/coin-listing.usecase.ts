@@ -25,6 +25,9 @@ export class CoinListingUsecase extends BaseUsecase<Promise<any>> {
                     where: {
                         deleted_at: null,
                     },
+                    orderBy: {
+                        created_at: 'desc',
+                    },
                     take: 1,
                 }
             }
