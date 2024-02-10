@@ -28,7 +28,6 @@ export default function Page () {
                             iconId={coin.icon_id}
                             symbol={coin.symbol}
                             name={coin.name}
-                            slug={coin.slug}
                             price={coin.quote?.price_thb ?? 0}
                             decimals={coin.decimals}
                             showBalance
