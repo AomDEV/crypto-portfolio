@@ -10,7 +10,7 @@ import {
 import { createPagination } from "./helper";
 import { Fragment, useCallback } from "react";
 import { CreatePaginationHelperMetadata, PaginatorProps } from "./types";
-import usePagination from "./hooks";
+import { usePagination } from "./hooks";
 
 export default function Paginator({
 	children,
