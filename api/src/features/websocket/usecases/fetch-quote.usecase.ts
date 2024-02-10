@@ -20,11 +20,6 @@ export class FetchQuoteUsecase extends BaseUsecase<Promise<void>> {
                 deleted_at: null,
             },
         });
-        const { data: quotes } = await coincap().get(`/v2/assets`, {
-            params: {
-                ids: assets.map(asset => asset.slug).join(','), 
-            },
-        });
 
         const exchangeRate = await this.prismaService.currency.findUnique({
             where: {
@@ -34,24 +29,35 @@ export class FetchQuoteUsecase extends BaseUsecase<Promise<void>> {
             include: {
                 rates: {
                     where: {
-                        currency: {
-                            symbol: 'THB',
-                        },
+                        symbol: 'THB',
                         deleted_at: null,
                     },
                     take: 1,
                 },
             },
         });
-        
-        const transactions: Array<Prisma.PrismaPromise<any>> = (quotes.data as any[]).map(quote => this.prismaService.assetQuote.create({
-            data: {
-                asset_id: assets.find(asset => asset.slug === quote.id).id,
-                price_usd: parseFloat(quote.priceUsd),
-                price_thb: exchangeRate.rates[0].rate.mul(quote.priceUsd).toNumber(),
-            }
+        if (!exchangeRate || exchangeRate.rates.length <= 0) return this.logger.error('Failed to fetch exchange rate');
+
+        const transactions: Array<() => Prisma.PrismaPromise<any>> = await Promise.all(assets.map(async (asset) => {
+            const { data: quotes } = await coincap().get(`/v2/assets`, {
+                params: {
+                    search: asset.symbol,
+                },
+            });
+            const quote = quotes.data.find(quote => quote.symbol === asset.symbol);
+            if (!quote) return null;
+
+            this.logger.log(`Fetched quote for ${asset.symbol} with price ${quote.priceUsd}`);
+            return () => this.prismaService.assetQuote.create({
+                data: {
+                    asset_id: asset.id,
+                    price_usd: parseFloat(quote.priceUsd),
+                    price_thb: exchangeRate.rates[0].rate.mul(quote.priceUsd)?.toNumber(),
+                }
+            });
         }));
-        const created = await this.prismaService.$transaction(transactions);
+
+        const created = await this.prismaService.$transaction(transactions.filter(tx => typeof tx === "function").map(tx => tx()));
         if (created.length <= 0) throw new ForbiddenException('Failed to create quotes');
         this.logger.log(`Fetched ${created.length} quotes`);
 

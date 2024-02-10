@@ -1,7 +1,7 @@
 import { SubscribeMessage, WebSocketGateway as WsGateway } from "@nestjs/websockets";
 import { WebSocketService } from "./websocket.service";
 
-@WsGateway(80, { transports: ['websocket'] })
+@WsGateway(3001, { transports: ['websocket'] })
 export class WebSocketGateway {
     constructor (
         private readonly websocketService: WebSocketService,

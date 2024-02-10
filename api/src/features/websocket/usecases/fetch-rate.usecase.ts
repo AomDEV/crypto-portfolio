@@ -22,9 +22,9 @@ export class FetchRateUsecase extends BaseUsecase<Promise<void>> {
         });
 
         const SYMBOL = 'THB';
-        const transactions: Array<Prisma.PrismaPromise<any>> = [];
-        for (const currency of currencies) {
-            const {data: exchange} = await oxr().get('/api/latest.json', {
+        const transactions: Array<() => Prisma.PrismaPromise<any>> = await Promise.all(currencies.map(async (currency) => {
+            if (SYMBOL === currency.symbol) return null;
+            const { data: exchange } = await oxr().get('/api/latest.json', {
                 params: {
                     app_id: process.env.OXR_APP_ID,
                     base: currency.symbol,
@@ -32,16 +32,16 @@ export class FetchRateUsecase extends BaseUsecase<Promise<void>> {
                 },
             });
             const rate = exchange.rates[SYMBOL];
-            transactions.push(this.prismaService.currencyRate.create({
+            this.logger.log(`Fetched rate for ${currency.symbol} to ${SYMBOL} with rate ${rate}`);
+            return () => this.prismaService.currencyRate.create({
                 data: {
                     currency_id: currency.id,
                     symbol: SYMBOL,
                     rate,
                 },
-            }));
-            this.logger.log(`Fetched rate for ${currency.symbol} to ${SYMBOL} with rate ${rate}`);
-        }
-        const created = await this.prismaService.$transaction(transactions);
+            });
+        }).filter(Boolean));
+        const created = await this.prismaService.$transaction(transactions.filter(tx => typeof tx === "function").map(tx => tx()));
         if (created.length <= 0) throw new ForbiddenException('Failed to create rates');
 
         const eventName = 'rate.fetched';
