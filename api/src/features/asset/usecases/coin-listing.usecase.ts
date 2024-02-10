@@ -19,8 +19,23 @@ export class CoinListingUsecase extends BaseUsecase<Promise<any>> {
         const [data, meta] = await this.pagination.asset.paginate({
             where: {
                 deleted_at: null,
+            },
+            include: {
+                quotes: {
+                    where: {
+                        deleted_at: null,
+                    },
+                    take: 1,
+                }
             }
         }).withPages({page, limit})
-        return {data, meta}
+        return {
+            data: data.map(asset => ({
+                ...asset,
+                quotes: undefined,
+                quote: asset.quotes[0]
+            })),
+            meta
+        }
     }
 }

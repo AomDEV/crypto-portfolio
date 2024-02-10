@@ -9,6 +9,7 @@ import { Account } from "@prisma/client";
 import { OpenPositionUsecase } from "./usecases/open-position.usecase";
 import { OpenPositionDTO } from "./dto/open-position.dto";
 import { GetPositionUsecase } from "./usecases/get-position.usecase";
+import { Guest } from "@/common/decorators/guest";
 
 @Controller('asset')
 @ApiTags('Asset')
@@ -21,6 +22,7 @@ export class AssetController {
     ) {}
 
     @Get('listing')
+    @Guest()
     @ApiOperation({ summary: 'Get coin listing' })
     @ApiQuery({ name: 'page', required: true, type: Number, example: 1 })
     @ApiQuery({ name: 'limit', required: true, type: Number, example: 10 })
