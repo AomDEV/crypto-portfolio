@@ -52,7 +52,7 @@ export class AssetController {
 
     @ApiBearerAuth()
     @Get(':asset_id/position')
-    @ApiOperation({ summary: 'Get coin position' })
+    @ApiOperation({ summary: 'Get perpetual positions' })
     @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
     @ApiQuery({ name: 'page', required: true, type: Number, example: 1 })
     @ApiQuery({ name: 'limit', required: true, type: Number, example: 10 })
@@ -72,7 +72,7 @@ export class AssetController {
 
     @ApiBearerAuth()
     @Post(':asset_id/position/open')
-    @ApiOperation({ summary: 'Open position' })
+    @ApiOperation({ summary: 'Open perpetual position' })
     @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
     async openPosition (
         @Param('asset_id', ParseUUIDPipe) asset_id: string,
