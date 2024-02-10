@@ -19,7 +19,7 @@ export function useAsset (options: UseAssetOptions = {}) {
     const fetch = useCallback(async (page: number) => {
         setIsLoading(true)
         setMeta(null);
-        return api().get(`/v1/asset/listing`, {
+        return api().get(`/v1/asset`, {
             params: {
                 page,
                 limit,
