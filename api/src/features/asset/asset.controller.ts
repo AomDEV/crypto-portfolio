@@ -27,7 +27,7 @@ export class AssetController {
         private readonly closePositionUsecase: ClosePositionUsecase,
     ) {}
 
-    @Get('listing')
+    @Get()
     @Guest()
     @ApiOperation({ summary: 'Get coin listing' })
     @ApiQuery({ name: 'page', required: true, type: Number, example: 1 })
