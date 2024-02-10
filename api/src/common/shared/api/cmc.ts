@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export function cmc () {
+export default function cmc () {
     const apiUrl = String(process.env.CMC_API_URL);
     return axios.create({
         baseURL: apiUrl,
