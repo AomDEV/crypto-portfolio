@@ -2,6 +2,7 @@ import { BaseUsecase } from "@/common/shared/usecase";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Account } from "@prisma/client";
 import BigNumber from "bignumber.js";
+import { AssetService } from "../asset.service";
 
 type CoinBalanceUsecaseProps = {
     asset_id: string;
@@ -10,7 +11,9 @@ type CoinBalanceUsecaseProps = {
 
 @Injectable()
 export class CoinBalanceUsecase extends BaseUsecase<Promise<any>> {
-    constructor () {
+    constructor (
+        private readonly assetService: AssetService,
+    ) {
         super();
     }
 
@@ -18,29 +21,12 @@ export class CoinBalanceUsecase extends BaseUsecase<Promise<any>> {
         asset_id,
         session
     }: CoinBalanceUsecaseProps): Promise<any> {
-        const asset = await this.prismaService.asset.findUnique({
-            where: {
-                id: asset_id,
-                deleted_at: null,
-            },
-            include: {
-                quotes: {
-                    where: {
-                        deleted_at: null,
-                    },
-                    orderBy: {
-                        created_at: 'desc',
-                    },
-                    take: 1,
-                }
-            },
-        });
-        if (!asset) throw new NotFoundException('Asset not found');
+        const { id, quote } = await this.assetService.getAsset(asset_id);
 
         const { _sum: aggregate } = await this.prismaService.transaction.aggregate({
             where: {
                 user_id: session.id,
-                asset_id,
+                asset_id: id,
                 deleted_at: null,
                 in: {
                     gte: 0,
@@ -56,14 +42,10 @@ export class CoinBalanceUsecase extends BaseUsecase<Promise<any>> {
         });
         const { in: inAmount, out: outAmount } = aggregate;
         const balance = BigNumber(inAmount?.toString() ?? "0").minus(BigNumber(outAmount?.toString() ?? "0"));
-        const fiat = asset.quotes.length <= 0 ? 0 : balance.multipliedBy(asset.quotes[0].price_thb).toNumber();
+        const fiat = quote ? balance.multipliedBy(quote.price_thb).toNumber() : 0;
         
         return {
-            asset: {
-                ...asset,
-                quotes: undefined,
-                quote: asset.quotes[0],
-            },
+            quote,
             balance,
             fiat,
         }

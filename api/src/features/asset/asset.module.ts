@@ -5,11 +5,13 @@ import { CoinBalanceUsecase } from "./usecases/coin-balance.usecase";
 import { OpenPositionUsecase } from "./usecases/open-position.usecase";
 import { GetPositionUsecase } from "./usecases/get-position.usecase";
 import { ClosePositionUsecase } from "./usecases/close-position.usecase";
+import { AssetService } from "./asset.service";
 
 @Module({
     imports: [],
     controllers: [AssetController],
     providers: [
+        AssetService,
         CoinListingUsecase,
         CoinBalanceUsecase,
         GetPositionUsecase,
