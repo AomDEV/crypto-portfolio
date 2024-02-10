@@ -1,0 +1,17 @@
+import { Asset } from "asset"
+
+model AssetQuote {
+    id              String          @id @default(uuid())
+
+    asset_id        String
+    price_usd       Float
+    price_thb       Float
+
+    deleted_at      DateTime?
+    created_at      DateTime        @default(now())
+    updated_at      DateTime        @updatedAt
+
+    asset           Asset           @relation("asset_quote_asset", fields: [asset_id], references: [id])
+
+    @@map("asset_quote")
+}

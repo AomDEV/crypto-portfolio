@@ -1,0 +1,15 @@
+import { CurrencyRate } from "currency_rate"
+
+model Currency {
+    id              String          @id @default(uuid())
+
+    symbol          String          @unique
+
+    deleted_at      DateTime?
+    created_at      DateTime        @default(now())
+    updated_at      DateTime        @updatedAt
+
+    rates           CurrencyRate[]  @relation("currency_rate_currency")
+
+    @@map("currency")
+}

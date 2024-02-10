@@ -9,6 +9,7 @@ import { APP_GUARDS } from '@/common/constants/provider';
 // @features
 import { AuthenticationModule } from '@/features/authentication/authentication.module';
 import { AssetModule } from '@/features/asset/asset.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
 	imports: [
@@ -17,6 +18,7 @@ import { AssetModule } from '@/features/asset/asset.module';
 		CacheModule.register({
 			isGlobal: true,
 		}),
+		ScheduleModule.forRoot(),
 
 		AuthenticationModule,
 		AssetModule,

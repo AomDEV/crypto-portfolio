@@ -1,5 +1,6 @@
 import { AssetFavorite } from "asset_favorite"
 import { AssetPosition } from "asset_position"
+import { AssetQuote } from "asset_quote"
 import { Transaction } from "transaction"
 
 model Asset {
@@ -17,6 +18,7 @@ model Asset {
     favorites       AssetFavorite[] @relation("asset_favorite_asset")
     positions       AssetPosition[] @relation("asset_position_asset")
     transactions    Transaction[]   @relation("transaction_asset")
+    quotes          AssetQuote[]    @relation("asset_quote_asset")
 
     @@map("asset")
 }

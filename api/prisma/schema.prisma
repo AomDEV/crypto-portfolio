@@ -104,6 +104,26 @@ model AssetPosition {
 }
 
 //
+// asset_quote.prisma
+//
+
+model AssetQuote {
+  id String @id @default(uuid())
+
+  asset_id  String
+  price_usd Float
+  price_thb Float
+
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  asset Asset @relation("asset_quote_asset", fields: [asset_id], references: [id])
+
+  @@map("asset_quote")
+}
+
+//
 // asset.prisma
 //
 
@@ -122,6 +142,7 @@ model Asset {
   favorites    AssetFavorite[] @relation("asset_favorite_asset")
   positions    AssetPosition[] @relation("asset_position_asset")
   transactions Transaction[]   @relation("transaction_asset")
+  quotes       AssetQuote[]    @relation("asset_quote_asset")
 
   @@map("asset")
 }
@@ -145,6 +166,44 @@ enum EDirection {
 enum EPositionStatus {
   OPEN
   CLOSE
+}
+
+//
+// currency_rate.prisma
+//
+
+model CurrencyRate {
+  id String @id @default(uuid())
+
+  currency_id String
+  symbol      String
+  rate        Decimal @db.Money
+
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  currency Currency @relation("currency_rate_currency", fields: [currency_id], references: [id])
+
+  @@map("currency_rate")
+}
+
+//
+// currency.prisma
+//
+
+model Currency {
+  id String @id @default(uuid())
+
+  symbol String @unique
+
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  rates CurrencyRate[] @relation("currency_rate_currency")
+
+  @@map("currency")
 }
 
 //

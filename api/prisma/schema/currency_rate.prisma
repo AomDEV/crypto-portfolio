@@ -1,0 +1,17 @@
+import { Currency } from "currency";
+
+model CurrencyRate {
+    id              String          @id @default(uuid())
+
+    currency_id     String
+    symbol          String
+    rate            Decimal         @db.Money
+
+    deleted_at      DateTime?
+    created_at      DateTime        @default(now())
+    updated_at      DateTime        @updatedAt
+
+    currency        Currency        @relation("currency_rate_currency", fields: [currency_id], references: [id])
+    
+    @@map("currency_rate")
+}
