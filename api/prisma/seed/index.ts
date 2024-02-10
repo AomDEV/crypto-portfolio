@@ -12,7 +12,7 @@ async function main() {
     await seed.setup(prisma.account, (tx: typeof prisma.account) => tx.createMany({ data: _accounts}));
 
     const _assets = await asset();
-    await seed.setup(prisma.asset, (tx: typeof prisma.asset) => tx.createMany({ data: _assets}));
+    await seed.setup(prisma.asset, (tx: typeof prisma.asset) => _assets.map(asset => tx.create({ data: asset })));
 
     const _currencies = await currency();
     await seed.setup(prisma.currency, (tx: typeof prisma.currency) => tx.createMany({ data: _currencies}));

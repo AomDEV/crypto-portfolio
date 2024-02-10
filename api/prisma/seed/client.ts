@@ -26,11 +26,11 @@ export class Seed {
 
     async setup (
         model: PrismaModel,
-        execution: (prisma: PrismaModel) => Prisma.PrismaPromise<any>
+        execution: (prisma: PrismaModel) => Prisma.PrismaPromise<any> | Array<Prisma.PrismaPromise<any>>
     ) {
         const count = await (model as unknown as any).count({});
         if(count > 0) return null;
-        return this.$transactions.push(execution(model));
+        return this.$transactions.push(...[execution(model)].flat());
     }
 
     execute () {

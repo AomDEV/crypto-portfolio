@@ -1,7 +1,7 @@
 import { cmc } from "../client";
 
 
-export default async function account () {
+export default async function asset () {
     const response = await cmc().get(`/v1/cryptocurrency/listings/latest`, {
         params: {
             start: 1,
@@ -13,7 +13,8 @@ export default async function account () {
     return (data as Array<{[key: string]: any}>).map(({
         name,
         symbol,
-        slug
+        slug,
+        quote
     }) => ({
         name: String(name),
         symbol: String(symbol),
