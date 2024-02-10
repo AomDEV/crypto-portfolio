@@ -12,10 +12,12 @@ export default async function account () {
     const { data } = response.data;
     return (data as Array<{[key: string]: any}>).map(({
         name,
-        symbol
+        symbol,
+        slug
     }) => ({
         name: String(name),
         symbol: String(symbol),
+        slug: String(slug),
         decimals: 18,
     }))
 }

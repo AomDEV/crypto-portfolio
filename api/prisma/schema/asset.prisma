@@ -6,6 +6,7 @@ model Asset {
     id              String          @id @default(uuid())
 
     name            String
+    slug            String          @unique
     symbol          String
     decimals        Int             @default(18)
 
