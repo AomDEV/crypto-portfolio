@@ -5,6 +5,7 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { isUUID } from "class-validator";
 import { TYPES } from "@/common/constants/transaction";
 import BigNumber from "bignumber.js";
+import { AssetService } from "../asset.service";
 
 type ClosePositionUsecaseProps = {
     asset_id: string;
@@ -13,7 +14,9 @@ type ClosePositionUsecaseProps = {
 };
 
 export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
-    constructor () {
+    constructor (
+        private readonly assetService: AssetService,
+    ) {
         super();
     }
 
@@ -24,43 +27,17 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
     }: ClosePositionUsecaseProps): Promise<AssetPosition> {
         if (!isUUID(asset_id)) throw new BadRequestException('Invalid asset_id');
 
-        const asset = await this.prismaService.asset.findUnique({
-            where: {
-                id: asset_id,
-                deleted_at: null,
-            },
-            include: {
-                quotes: {
-                    where: {
-                        deleted_at: null,
-                    },
-                    orderBy: {
-                        created_at: 'desc',
-                    },
-                    take: 1,
-                }
-            },
-        });
-        if (!asset) throw new NotFoundException('Asset not found');
+        const asset = await this.assetService.getAsset(asset_id);
+        
+        const { position, raw_profit, net_profit } = await this.assetService.getPositionProfit(body.position_id);
 
-        const position = await this.prismaService.assetPosition.findUnique({
-            where: {
-                id: body.position_id,
-                user_id: session.id,
-                deleted_at: null,
-            },
-        });
-        if (!position) throw new NotFoundException('Position not found');
-
-        const exit_price = asset.quotes[0].price_thb;
-        const profit = BigNumber(position.amount.toString()).multipliedBy(position.entry_price.sub(exit_price).mul(position.leverage).toNumber());
         return this.prismaService.assetPosition.update({
             where: {
                 id: position.id,
             },
             data: {
-                exit_price,
-                profit: BigInt(profit.toString()),
+                exit_price: position.exit_price,
+                profit: BigInt(net_profit.toString()),
                 status: EPositionStatus.CLOSE,
                 exited_at: new Date(),
                 close_tx: {
@@ -76,8 +53,8 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
                             }
                         },
                         type: TYPES.EXIT_POSITION,
-                        out: profit.isNegative() ? BigInt(profit.abs().minus(position.amount.toString()).toString()) : 0,
-                        in: profit.isPositive() ? BigInt(profit.toString()) : 0,
+                        out: raw_profit.isNegative() ? BigInt(raw_profit.abs().minus(position.amount.toString()).toString()) : 0,
+                        in: raw_profit.isPositive() ? BigInt(raw_profit.toString()) : 0,
                     }
                 }
             },

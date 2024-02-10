@@ -6,6 +6,7 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { cmc } from "@/common/shared/api";
 import { TYPES } from "@/common/constants/transaction";
 import { isUUID } from "class-validator";
+import { AssetService } from "../asset.service";
 
 type OpenPositionUsecaseProps = {
     asset_id: string;
@@ -14,7 +15,9 @@ type OpenPositionUsecaseProps = {
 };
 
 export class OpenPositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
-    constructor () {
+    constructor (
+        private readonly assetService: AssetService,
+    ) {
         super();
     }
 
@@ -28,13 +31,7 @@ export class OpenPositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
         if (!isUUID(asset_id)) throw new BadRequestException('Invalid asset_id');
         if (BigNumber(amount).isLessThanOrEqualTo(0)) throw new BadRequestException('Amount must be greater than 0');
 
-        const asset = await this.prismaService.asset.findUnique({
-            where: {
-                id: asset_id,
-                deleted_at: null,
-            },
-        });
-        if (!asset) throw new NotFoundException('Asset not found');
+        const asset = await this.assetService.getAsset(asset_id);
 
         const quotes = await cmc().get('/v2/cryptocurrency/quotes/latest', {
             params: {
