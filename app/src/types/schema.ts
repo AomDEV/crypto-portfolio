@@ -18,5 +18,5 @@ export type Asset = {
     created_at: Date,
     updated_at: Date,
     balance?: string,
-    quote: AssetQuote,
+    quote?: AssetQuote,
 };
