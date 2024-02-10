@@ -5,12 +5,13 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '@/common/middlewares/jwt.strategy';
 import { APP_GUARDS } from '@/common/constants/provider';
+import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 // @features
 import { AuthenticationModule } from '@/features/authentication/authentication.module';
 import { AssetModule } from '@/features/asset/asset.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { EventEmitterModule } from '@nestjs/event-emitter';
+import { WebSocketModule } from '@/features/websocket/websocket.module';
 
 @Module({
 	imports: [
@@ -25,6 +26,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       		verboseMemoryLeak: false,
 		}),
 
+		WebSocketModule,
 		AuthenticationModule,
 		AssetModule,
 	],

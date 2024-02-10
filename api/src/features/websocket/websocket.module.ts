@@ -10,6 +10,7 @@ import { WebSocketGateway } from "./websocket.gateway";
     providers: [
         WebSocketGateway,
         WebSocketService,
+        
         FetchQuoteUsecase,
         FetchRateUsecase,
     ],
