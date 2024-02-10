@@ -1,16 +1,17 @@
 export type CoinIconProps = {
-    icon_id: string | null;
+    iconId: string | null;
     symbol: string;
     width?: number;
     height?: number;
 };
 export type CoinItemProps = {
+    assetId: string;
     name: string;
     symbol: string;
-    icon_id: string | null;
+    iconId: string | null;
     slug?: string;
     price: number;
     decimals: number;
-    balance?: string;
     currency: string;
+    showBalance?: boolean;
 };
