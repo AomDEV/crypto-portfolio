@@ -1,4 +1,4 @@
-import { THB_UUID } from "./currency";
+import { THB_UUID, USD_UUID } from "./currency";
 
 export default async function currencyRate () {
     return [
@@ -6,6 +6,11 @@ export default async function currencyRate () {
             currency_id: THB_UUID,
             symbol: 'THB',
             rate: 1,
+        },
+        {
+            currency_id: USD_UUID,
+            symbol: 'THB',
+            rate: 30,
         }
     ];
 }
