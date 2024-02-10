@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+    images: {
+        domains: [
+            's2.coinmarketcap.com' // CoinMarketCap
+        ]
+    }
+};
 
 export default nextConfig;
