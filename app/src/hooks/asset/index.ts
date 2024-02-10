@@ -1,12 +1,8 @@
 import { api } from "@/lib/api";
 import { PaginationMeta } from "@/types/pagination";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Asset, UseAssetOptions } from "./types";
 
-type UseAssetOptions = {
-    page?: number;
-    limit?: number;
-    callOnMount?: boolean;
-};
 export function useAsset (options: UseAssetOptions = {}) {
     options = Object.assign({
         page: 1,
@@ -15,7 +11,7 @@ export function useAsset (options: UseAssetOptions = {}) {
     }, options);
     const { page: _page, limit, callOnMount } = options;
     
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<Asset[]>([]);
     const [meta, setMeta] = useState<PaginationMeta | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const noData = useMemo(() => !isLoading && data.length === 0, [data, isLoading]);
