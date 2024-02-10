@@ -1,4 +1,3 @@
-// v2/assets/ethereum
 import axios from 'axios';
 
 export default function coincap() {
