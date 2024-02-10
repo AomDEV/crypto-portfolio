@@ -18,8 +18,7 @@ export function useAsset (options: UseAssetOptions) {
         if (!assetId) return;
         setIsLoading(true)
         return api().get(`/v1/asset/${assetId}`).then((response) => {
-            const { data } = response.data;
-            setData(data);
+            setData(response.data);
         }).catch(() => {
             setData(null);
         }).finally(() => {
