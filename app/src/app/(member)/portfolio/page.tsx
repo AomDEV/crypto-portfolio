@@ -4,12 +4,12 @@ import CoinItem from "@/components/coin/item";
 import { LoadingText, NoDataText } from "@/components/loading";
 import Paginator from "@/components/paginator";
 import usePaginator from "@/components/paginator/hooks";
-import { useAsset } from "@/hooks/asset";
+import { useAssets } from "@/hooks/asset/get-all";
 import { Fragment } from "react";
 
 const LIMIT = 10;
 export default function Page () {
-    const {fetch, data, meta, isLoading, noData} = useAsset({
+    const {fetch, data, meta, isLoading, noData} = useAssets({
         page: 1,
         limit: LIMIT,
         callOnMount: false
