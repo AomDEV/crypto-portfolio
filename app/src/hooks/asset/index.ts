@@ -29,6 +29,9 @@ export function useAsset (options: UseAssetOptions = {}) {
             const { data, meta } = response.data;
             setData(data);
             setMeta(meta);
+        }).catch(() => {
+            setData([]);
+            setMeta(null);
         }).finally(() => {
             setIsLoading(false);
         })
