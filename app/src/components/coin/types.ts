@@ -12,6 +12,6 @@ export type CoinItemProps = {
     slug?: string;
     price: number;
     decimals: number;
-    currency: string;
+    currency?: string;
     showBalance?: boolean;
 };
