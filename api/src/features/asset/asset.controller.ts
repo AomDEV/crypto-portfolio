@@ -10,6 +10,8 @@ import { OpenPositionUsecase } from "./usecases/open-position.usecase";
 import { OpenPositionDTO } from "./dto/open-position.dto";
 import { GetPositionUsecase } from "./usecases/get-position.usecase";
 import { Guest } from "@/common/decorators/guest";
+import { ClosePositionUsecase } from "./usecases/close-position.usecase";
+import { ClosePositionDTO } from "./dto/close-position.dto";
 
 @Controller('asset')
 @ApiTags('Asset')
@@ -19,6 +21,7 @@ export class AssetController {
         private readonly coinBalanceUsecase: CoinBalanceUsecase,
         private readonly getPositionUsecase: GetPositionUsecase,
         private readonly openPositionUsecase: OpenPositionUsecase,
+        private readonly closePositionUsecase: ClosePositionUsecase,
     ) {}
 
     @Get('listing')
@@ -82,6 +85,22 @@ export class AssetController {
         @AuthSession() session: Account,
     ) {
         return this.openPositionUsecase.execute({
+            asset_id,
+            body,
+            session,
+        });
+    }
+
+    @ApiBearerAuth()
+    @Post(':asset_id/position/close')
+    @ApiOperation({ summary: 'Close perpetual position' })
+    @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
+    async closePosition (
+        @Param('asset_id', ParseUUIDPipe) asset_id: string,
+        @Body() body: ClosePositionDTO,
+        @AuthSession() session: Account,
+    ) {
+        return this.closePositionUsecase.execute({
             asset_id,
             body,
             session,

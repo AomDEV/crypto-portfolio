@@ -4,6 +4,7 @@ import { CoinListingUsecase } from "./usecases/coin-listing.usecase";
 import { CoinBalanceUsecase } from "./usecases/coin-balance.usecase";
 import { OpenPositionUsecase } from "./usecases/open-position.usecase";
 import { GetPositionUsecase } from "./usecases/get-position.usecase";
+import { ClosePositionUsecase } from "./usecases/close-position.usecase";
 
 @Module({
     imports: [],
@@ -13,6 +14,7 @@ import { GetPositionUsecase } from "./usecases/get-position.usecase";
         CoinBalanceUsecase,
         GetPositionUsecase,
         OpenPositionUsecase,
+        ClosePositionUsecase,
     ],
 })
 export class AssetModule {}

@@ -82,7 +82,7 @@ model AssetPosition {
   amount      BigInt
   entry_price Decimal    @db.Money
   exit_price  Decimal?   @db.Money
-  profit      Float?
+  profit      BigInt?
 
   status EPositionStatus @default(OPEN)
 
