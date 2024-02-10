@@ -1,7 +1,8 @@
 import { api } from "@/lib/api";
 import { PaginationMeta } from "@/types/pagination";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Asset, UseAssetOptions } from "./types";
+import { UseAssetOptions } from "./types";
+import { Asset } from "@/types/schema";
 
 export function useAsset (options: UseAssetOptions = {}) {
     options = Object.assign({
