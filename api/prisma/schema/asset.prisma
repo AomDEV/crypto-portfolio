@@ -10,6 +10,7 @@ model Asset {
     slug            String          @unique
     symbol          String
     decimals        Int             @default(18)
+    icon_id         String?
 
     deleted_at      DateTime?
     created_at      DateTime        @default(now())
