@@ -13,6 +13,7 @@ export type Asset = {
     deleted_at: Date | null,
     created_at: Date,
     updated_at: Date,
+    balance?: string,
     quote: {
         id: string,
         asset_id: string,
