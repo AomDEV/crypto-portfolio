@@ -12,6 +12,7 @@ import { GetPositionUsecase } from "./usecases/get-position.usecase";
 import { Guest } from "@/common/decorators/guest";
 import { ClosePositionUsecase } from "./usecases/close-position.usecase";
 import { ClosePositionDTO } from "./dto/close-position.dto";
+import { CoinInfoUsecase } from "./usecases/coin-info.usecase";
 
 @Controller({
     version: '1',
@@ -20,6 +21,7 @@ import { ClosePositionDTO } from "./dto/close-position.dto";
 @ApiTags('Asset')
 export class AssetController {
     constructor (
+        private readonly coinInfoUsecase: CoinInfoUsecase,
         private readonly coinListingUsecase: CoinListingUsecase,
         private readonly coinBalanceUsecase: CoinBalanceUsecase,
         private readonly getPositionUsecase: GetPositionUsecase,
@@ -42,6 +44,16 @@ export class AssetController {
             page,
             limit,
         });
+    }
+
+    @Get(':asset_id')
+    @Guest()
+    @ApiOperation({ summary: 'Get coin info' })
+    @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
+    async info (
+        @Param('asset_id', ParseUUIDPipe) asset_id: string,
+    ) {
+        return this.coinInfoUsecase.execute({ asset_id });
     }
 
     @ApiBearerAuth()
