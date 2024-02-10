@@ -23,6 +23,14 @@ export class CoinBalanceUsecase extends BaseUsecase<Promise<any>> {
                 id: asset_id,
                 deleted_at: null,
             },
+            include: {
+                quotes: {
+                    where: {
+                        deleted_at: null,
+                    },
+                    take: 1,
+                }
+            },
         });
         if (!asset) throw new NotFoundException('Asset not found');
 
@@ -44,11 +52,17 @@ export class CoinBalanceUsecase extends BaseUsecase<Promise<any>> {
             }
         });
         const { in: inAmount, out: outAmount } = aggregate;
-        const balance = BigNumber(inAmount.toString()).minus(BigNumber(outAmount.toString()));
+        const balance = BigNumber(inAmount?.toString() ?? "0").minus(BigNumber(outAmount?.toString() ?? "0"));
+        const fiat = asset.quotes.length <= 0 ? 0 : balance.multipliedBy(asset.quotes[0].price_thb).toNumber();
         
         return {
-            asset,
+            asset: {
+                ...asset,
+                quotes: undefined,
+                quote: asset.quotes[0],
+            },
             balance,
+            fiat,
         }
     }
 }

@@ -43,7 +43,7 @@ export class LoginUsecase extends BaseUsecase<Promise<LoginUsecaseResponse>> {
             user_id: account.id,
         }, {
             expiresIn: '3h',
-            secret: process.env.JWT_ACCESS_SECRET,
+            secret: process.env.JWT_SECRET,
         });
         return { user_id, access_token, expires_in }
     }

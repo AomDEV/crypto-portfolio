@@ -33,7 +33,7 @@ export class WebSocketService implements OnModuleInit {
 
     async onModuleInit() {
         const calls = [
-            this.getQuotes(),
+            // this.getQuotes(),
             this.getRates()
         ];
         await Promise.all(calls);

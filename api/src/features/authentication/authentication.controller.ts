@@ -4,6 +4,7 @@ import { LoginDTO } from "./dto/login.dto";
 import { LoginUsecase } from "./usecases/login.usecase";
 import { RegisterDTO } from "./dto/register.dto";
 import { RegisterUsecase } from "./usecases/register.usecase";
+import { Guest } from "@/common/decorators/guest";
 
 @Controller('authentication')
 @ApiTags('Authentication')
@@ -14,6 +15,7 @@ export class AuthenticationController {
     ) {}
     
     @Post('login')
+    @Guest()
     @ApiOperation({ summary: 'Login' })
     @ApiBody({ type: LoginDTO })
     async login (
@@ -23,6 +25,7 @@ export class AuthenticationController {
     }
 
     @Post('register')
+    @Guest()
     @ApiOperation({ summary: 'Register' })
     @ApiBody({ type: RegisterDTO })
     async register (
