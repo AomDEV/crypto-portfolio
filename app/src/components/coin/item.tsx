@@ -10,7 +10,6 @@ export default function CoinItem ({
     iconId,
     symbol,
     name,
-    slug,
     price,
     showBalance = false,
     decimals = 18,
@@ -20,10 +19,27 @@ export default function CoinItem ({
         assetId,
         callOnMount: showBalance
     });
-    
+
     return (
-        <Link href={slug ? `/coin/${slug}` : '#'} passHref title={name}>
-            <div className="border rounded-lg p-2 flex gap-4 items-center">
+        <Link
+            href={`/asset/${assetId}`}
+            passHref
+            title={name}
+        >
+            <div
+                className={[
+                    "border",
+                    "rounded-lg",
+                    "p-2",
+                    "flex",
+                    "gap-4",
+                    "items-center",
+                    "bg-white",
+                    "hover:bg-slate-100",
+                    "duration-250",
+                    "transition-colors",
+                ].join(" ")}
+            >
                 <CoinIcon iconId={iconId} symbol={symbol} width={32} height={32} />
                 <div className="flex gap-2 items-center">
                     <h2 className="font-bold">{name}</h2>

@@ -9,7 +9,6 @@ export type CoinItemProps = {
     name: string;
     symbol: string;
     iconId: string | null;
-    slug?: string;
     price: number;
     decimals: number;
     currency?: string;
