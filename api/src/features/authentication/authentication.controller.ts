@@ -6,7 +6,10 @@ import { RegisterDTO } from "./dto/register.dto";
 import { RegisterUsecase } from "./usecases/register.usecase";
 import { Guest } from "@/common/decorators/guest";
 
-@Controller('authentication')
+@Controller({
+    version: '1',
+    path: 'authentication',
+})
 @ApiTags('Authentication')
 export class AuthenticationController {
     constructor (

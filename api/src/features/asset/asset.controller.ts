@@ -13,7 +13,10 @@ import { Guest } from "@/common/decorators/guest";
 import { ClosePositionUsecase } from "./usecases/close-position.usecase";
 import { ClosePositionDTO } from "./dto/close-position.dto";
 
-@Controller('asset')
+@Controller({
+    version: '1',
+    path: 'asset',
+})
 @ApiTags('Asset')
 export class AssetController {
     constructor (
