@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { FetchQuoteUsecase } from "./usecases/fetch-quote.usecase";
 import { WebSocketService } from "./websocket.service";
+import { FetchRateUsecase } from "./usecases/fetch-rate.usecase";
 
 @Module({
     imports: [],
@@ -8,6 +9,7 @@ import { WebSocketService } from "./websocket.service";
     providers: [
         WebSocketService,
         FetchQuoteUsecase,
+        FetchRateUsecase,
     ],
 })
 export class WebSocketModule {}
