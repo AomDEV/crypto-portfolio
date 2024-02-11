@@ -4,6 +4,7 @@ import { FetchQuoteUsecase } from "./usecases/fetch-quote.usecase";
 import { FetchRateUsecase } from "./usecases/fetch-rate.usecase";
 import { Observable, fromEvent, map, merge } from "rxjs";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { EVENT } from "./constant";
 
 @Injectable()
 export class EventService implements OnModuleInit, OnModuleDestroy {
@@ -17,7 +18,7 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
 
     subscribe<T>(eventName: string | string[]): Observable<MessageEvent<T>> {
         if (Array.isArray(eventName)) {
-            const events = eventName.map(name => fromEvent(this.eventEmitter, name).pipe<MessageEvent<T>>(
+            const events = Object.values(EVENT).map(name => fromEvent(this.eventEmitter, name).pipe<MessageEvent<T>>(
                 map((data: T) => new MessageEvent(name, { data })),
             ));
             return merge(...events);
@@ -27,7 +28,7 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
         );
     }
 
-    emit<T>(name: string, data: T) {
+    emit<T>(name: string | string[], data: T) {
         this.logger.log(`Emitting event "${name}" with data ${JSON.stringify(data).length} bytes`);
         return this.eventEmitter.emit(name, data);
     }
@@ -35,19 +36,19 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
     @Cron(CronExpression.EVERY_30_SECONDS, {})
     async getQuotes () {
         const created = await this.fetchQuoteUsecase.execute();
-        return Promise.all(created.map(data => this.emit('quote', data)));
+        return Promise.all(created.map(data => this.emit([EVENT.QUOTE, `${EVENT.QUOTE}:${data.asset_id}`], data)));
     }
 
     @Cron(CronExpression.EVERY_HOUR, {})
     async getRates () {
         const created = await this.fetchRateUsecase.execute();
-        return Promise.all(created.map(data => this.emit('rate', data)));
+        return Promise.all(created.map(data => this.emit([EVENT.RATE, `${EVENT.RATE}:${data.currency_id}`], data)));
     }
 
     @Cron(CronExpression.EVERY_5_SECONDS, {})
     async getHeartbeat () {
         const time = new Date().getTime();
-        return this.emit('heartbeat', {time});
+        return this.emit(EVENT.HEARTBEAT, {time});
     }
 
     async onModuleInit() {
