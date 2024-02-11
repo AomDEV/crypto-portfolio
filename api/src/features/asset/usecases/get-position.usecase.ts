@@ -1,12 +1,13 @@
 import { BaseUsecase } from "@/common/shared/usecase";
-import { NotFoundException } from "@nestjs/common";
 import { Account } from "@prisma/client";
 import { AssetService } from "../asset.service";
+import { NotFoundException } from "@nestjs/common";
 
 type GetPositionUsecaseProps = {
     asset_id: string;
-    page: number;
-    limit: number;
+    position_id?: string;
+    page?: number;
+    limit?: number;
     session: Account;
 };
 
@@ -19,11 +20,26 @@ export class GetPositionUsecase extends BaseUsecase<Promise<any>> {
 
     async execute({
         asset_id,
+        position_id,
         page,
         limit,
         session,
     }: GetPositionUsecaseProps): Promise<any> {
         const asset = await this.assetService.getAsset(asset_id);
+
+        if (position_id) { 
+            const position = await this.prismaService.assetPosition.findUnique({
+                where: {
+                    asset_id: asset.id,
+                    user_id: session.id,
+                    id: position_id,
+                    deleted_at: null,
+                },
+            });
+            if (!position) throw new NotFoundException('Position not found');
+            const performance = await this.assetService.getPositionProfit(position_id);
+            return Object.assign(position, { performance });
+        }
 
         const [data, meta] = await this.pagination.assetPosition.paginate({
             where: {
@@ -39,7 +55,7 @@ export class GetPositionUsecase extends BaseUsecase<Promise<any>> {
         return {
             data: Promise.all(data.map(async (position) => ({
                 ...position,
-                profit: await this.assetService.getPositionProfit(position.id)
+                performance: await this.assetService.getPositionProfit(position.id)
             }))),
             meta
         }

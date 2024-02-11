@@ -11,7 +11,6 @@ import { OpenPositionDTO } from "./dto/open-position.dto";
 import { GetPositionUsecase } from "./usecases/get-position.usecase";
 import { Guest } from "@/common/decorators/guest";
 import { ClosePositionUsecase } from "./usecases/close-position.usecase";
-import { ClosePositionDTO } from "./dto/close-position.dto";
 import { CoinInfoUsecase } from "./usecases/coin-info.usecase";
 
 @Controller({
@@ -91,6 +90,23 @@ export class AssetController {
     }
 
     @ApiBearerAuth()
+    @Get(':asset_id/position/:position_id')
+    @ApiOperation({ summary: 'Get perpetual position' })
+    @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
+    @ApiParam({ name: 'position_id', required: true, type: String, example: ZERO_UUID })
+    async positionDetail (
+        @Param('asset_id', ParseUUIDPipe) asset_id: string,
+        @Param('position_id', ParseUUIDPipe) position_id: string,
+        @AuthSession() session: Account,
+    ) {
+        return this.getPositionUsecase.execute({
+            asset_id,
+            position_id,
+            session,
+        });
+    }
+
+    @ApiBearerAuth()
     @Post(':asset_id/position/open')
     @ApiOperation({ summary: 'Open perpetual position' })
     @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
@@ -107,17 +123,18 @@ export class AssetController {
     }
 
     @ApiBearerAuth()
-    @Post(':asset_id/position/close')
+    @Post(':asset_id/position/:position_id/close')
     @ApiOperation({ summary: 'Close perpetual position' })
     @ApiParam({ name: 'asset_id', required: true, type: String, example: ZERO_UUID })
+    @ApiParam({ name: 'position_id', required: true, type: String, example: ZERO_UUID })
     async closePosition (
         @Param('asset_id', ParseUUIDPipe) asset_id: string,
-        @Body() body: ClosePositionDTO,
+        @Param('position_id', ParseUUIDPipe) position_id: string,
         @AuthSession() session: Account,
     ) {
         return this.closePositionUsecase.execute({
             asset_id,
-            body,
+            position_id,
             session,
         });
     }

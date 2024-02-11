@@ -51,7 +51,6 @@ export class AssetService {
         const netProfit = rawProfit.minus(position.amount.toString());
         const percentage = netProfit.div(position.amount.toString()).mul(100);
         return {
-            position,
             raw_profit: rawProfit,
             net_profit: netProfit,
             percentage: percentage.toNumber(),

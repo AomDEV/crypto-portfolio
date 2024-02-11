@@ -1,15 +1,13 @@
 import { BaseUsecase } from "@/common/shared/usecase";
 import { Account, AssetPosition, EPositionStatus } from "@prisma/client";
-import { ClosePositionDTO } from "../dto/close-position.dto";
-import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { BadRequestException } from "@nestjs/common";
 import { isUUID } from "class-validator";
 import { TYPES } from "@/common/constants/transaction";
-import BigNumber from "bignumber.js";
 import { AssetService } from "../asset.service";
 
 type ClosePositionUsecaseProps = {
     asset_id: string;
-    body: ClosePositionDTO;
+    position_id: string;
     session: Account;
 };
 
@@ -22,14 +20,23 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
 
     async execute({
         asset_id,
-        body,
+        position_id,
         session,
     }: ClosePositionUsecaseProps): Promise<AssetPosition> {
         if (!isUUID(asset_id)) throw new BadRequestException('Invalid asset_id');
 
         const asset = await this.assetService.getAsset(asset_id);
         
-        const { position, raw_profit, net_profit } = await this.assetService.getPositionProfit(body.position_id);
+        const position = await this.prismaService.assetPosition.findUnique({
+            where: {
+                asset_id: asset.id,
+                user_id: session.id,
+                id: position_id,
+                deleted_at: null,
+            },
+        });
+        if (!position) throw new BadRequestException('Position not found');
+        const { raw_profit, net_profit } = await this.assetService.getPositionProfit(position_id);
 
         return this.prismaService.assetPosition.update({
             where: {
