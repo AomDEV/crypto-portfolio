@@ -2,7 +2,10 @@ export type AssetQuote = {
     id: string,
     asset_id: string,
     price_usd: number,
+    volume_usd: number,
     price_thb: number,
+    volume_thb: number,
+    percent_change: number,
     deleted_at: Date | null,
     created_at: Date,
     updated_at: Date
