@@ -1,6 +1,7 @@
-import { Asset, AssetQuote, EPositionStatus, prisma } from "@/common/shared/prisma";
+import { Asset, AssetQuote, EDirection, EPositionStatus, prisma } from "@/common/shared/prisma";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Decimal } from "@prisma/client/runtime/library";
+import BigNumber from "bignumber.js";
 
 @Injectable()
 export class AssetService {
@@ -33,7 +34,7 @@ export class AssetService {
         };
     }
 
-    async getPositionProfit(position_id: string) {
+    async getPositionPerformance(position_id: string) {
         const position = await prisma.assetPosition.findUnique({
             where: {
                 id: position_id,
@@ -47,12 +48,18 @@ export class AssetService {
             position.exit_price = new Decimal(asset.quote.price_thb);
         }
         
-        const rawProfit = position.exit_price.sub(position.entry_price).mul(position.leverage).mul(position.amount.toString());
-        const netProfit = rawProfit.minus(position.amount.toString());
-        const percentage = netProfit.div(position.amount.toString()).mul(100);
+        const entryPrice = BigNumber(position.entry_price.toString());
+        const exitPrice = BigNumber(position.exit_price.toString());
+        const directionDivider = position.direction === EDirection.LONG ? entryPrice : exitPrice;
+        const entryAmount = entryPrice.multipliedBy(position.amount.toString()).div(directionDivider);
+        const exitAmount = exitPrice.multipliedBy(position.amount.toString()).div(directionDivider);
+        const rawProfit = exitAmount.multipliedBy(position.leverage);
+        const netProfit = rawProfit.minus(entryAmount).multipliedBy(position.leverage);
+        const percentage = netProfit.div(entryAmount).multipliedBy(100);
+
         return {
-            raw_profit: rawProfit,
-            net_profit: netProfit,
+            raw_profit: BigNumber(rawProfit.toString()).toFixed(0),
+            net_profit: BigNumber(netProfit.toString()).toFixed(0),
             percentage: percentage.toNumber(),
         }
     }

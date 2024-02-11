@@ -1,5 +1,5 @@
 import { BaseUsecase } from "@/common/shared/usecase";
-import { Account, AssetPosition, EPositionStatus } from "@prisma/client";
+import { Account, AssetPosition, EPositionStatus, Prisma } from "@prisma/client";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { isUUID } from "class-validator";
 import { TYPES } from "@/common/constants/transaction";
@@ -37,7 +37,8 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
             },
         });
         if (!position) throw new BadRequestException('Position not found');
-        const { raw_profit, net_profit } = await this.assetService.getPositionProfit(position_id);
+        const { raw_profit, net_profit } = await this.assetService.getPositionPerformance(position_id);
+        const rawProfit = new Prisma.Decimal(raw_profit);
 
         return this.prismaService.assetPosition.update({
             where: {
@@ -61,8 +62,8 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
                             }
                         },
                         type: TYPES.EXIT_POSITION,
-                        out: raw_profit.isNegative() ? (raw_profit.abs().minus(position.amount.toString()).toString()) : 0,
-                        in: raw_profit.isPositive() ? (raw_profit.toString()) : 0,
+                        out: rawProfit.isNegative() ? (rawProfit.abs().minus(position.amount.toString()).toString()) : 0,
+                        in: rawProfit.isPositive() ? (rawProfit.toString()) : 0,
                     }
                 }
             },

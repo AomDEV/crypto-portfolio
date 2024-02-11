@@ -38,7 +38,7 @@ export class GetPositionUsecase extends BaseUsecase<Promise<any>> {
                 },
             });
             if (!position) throw new NotFoundException('Position not found');
-            const performance = await this.assetService.getPositionProfit(position_id);
+            const performance = await this.assetService.getPositionPerformance(position_id);
             return Object.assign(position, { performance });
         }
 
@@ -55,7 +55,7 @@ export class GetPositionUsecase extends BaseUsecase<Promise<any>> {
         return {
             data: await Promise.all(data.map(async (position) => ({
                 ...position,
-                performance: await this.assetService.getPositionProfit(position.id)
+                performance: await this.assetService.getPositionPerformance(position.id)
             }))),
             meta
         }
