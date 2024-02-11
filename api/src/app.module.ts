@@ -24,6 +24,7 @@ import { EventModule } from '@/features/event/event.module';
 		EventEmitterModule.forRoot({
 			ignoreErrors: true,
       		verboseMemoryLeak: false,
+			maxListeners: 100,
 		}),
 
 		EventModule,
