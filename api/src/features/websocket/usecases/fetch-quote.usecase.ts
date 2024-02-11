@@ -48,10 +48,17 @@ export class FetchQuoteUsecase extends BaseUsecase<Promise<void>> {
             if (!quote) return null;
 
             this.logger.log(`Fetched quote for ${asset.symbol} with price ${quote.priceUsd}`);
+            const updated = await this.prismaService.asset.update({
+                where: {
+                    id: asset.id,
+                },
+                data: {
+                    rank: parseInt(quote?.rank ?? "0"),
+                },
+            });
             return () => this.prismaService.assetQuote.create({
                 data: {
-                    asset_id: asset.id,
-                    rank: parseInt(quote?.rank ?? "0"),
+                    asset_id: updated.id,
                     price_usd: parseFloat(quote?.priceUsd ?? "0"),
                     volume_usd: parseFloat(quote?.volumeUsd24Hr ?? "0"),
                     price_thb: exchangeRate.rates[0].rate.mul(quote?.priceUsd ?? 0)?.toNumber() ?? 0,

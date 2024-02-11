@@ -4,7 +4,6 @@ model AssetQuote {
     id              String          @id @default(uuid())
 
     asset_id        String
-    rank            Int
     
     price_usd       Float
     volume_usd      Float

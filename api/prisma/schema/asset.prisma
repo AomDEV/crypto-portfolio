@@ -6,6 +6,7 @@ import { Transaction } from "transaction"
 model Asset {
     id              String          @id @default(uuid())
 
+    rank            Int             @default(0)
     name            String
     slug            String          @unique
     symbol          String

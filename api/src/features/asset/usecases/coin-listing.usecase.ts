@@ -30,7 +30,10 @@ export class CoinListingUsecase extends BaseUsecase<Promise<any>> {
                     },
                     take: 1,
                 }
-            }
+            },
+            orderBy: {
+                rank: "asc"
+            },
         }).withPages({page, limit})
         return {
             data: data.map(asset => ({

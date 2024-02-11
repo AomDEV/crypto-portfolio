@@ -58,7 +58,6 @@ CREATE TABLE "asset_position" (
 CREATE TABLE "asset_quote" (
     "id" TEXT NOT NULL,
     "asset_id" TEXT NOT NULL,
-    "rank" INTEGER NOT NULL,
     "price_usd" DOUBLE PRECISION NOT NULL,
     "volume_usd" DOUBLE PRECISION NOT NULL,
     "price_thb" DOUBLE PRECISION NOT NULL,
@@ -74,6 +73,7 @@ CREATE TABLE "asset_quote" (
 -- CreateTable
 CREATE TABLE "asset" (
     "id" TEXT NOT NULL,
+    "rank" INTEGER NOT NULL DEFAULT 0,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "symbol" TEXT NOT NULL,

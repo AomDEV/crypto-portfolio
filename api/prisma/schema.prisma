@@ -111,7 +111,6 @@ model AssetQuote {
   id String @id @default(uuid())
 
   asset_id String
-  rank     Int
 
   price_usd  Float
   volume_usd Float
@@ -137,6 +136,7 @@ model AssetQuote {
 model Asset {
   id String @id @default(uuid())
 
+  rank     Int     @default(0)
   name     String
   slug     String  @unique
   symbol   String
