@@ -73,12 +73,6 @@ export class FetchQuoteUsecase extends BaseUsecase<Promise<void>> {
         this.logger.log(`Fetched ${created.length} quotes`);
 
         const eventName = 'quote.fetched';
-        const listenerCount = this.eventEmitter.listenerCount(eventName);
-        if (listenerCount > 0) {
-            for (const data of created) {
-                const emitter = this.eventEmitter.emit(eventName, data);
-                if (!emitter) throw new ForbiddenException('Failed to send event');
-            }
-        }
+        for (const data of created) this.eventEmitter.emit(eventName, data);
     }
 }

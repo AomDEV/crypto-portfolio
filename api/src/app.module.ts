@@ -22,6 +22,7 @@ import { WebSocketModule } from '@/features/websocket/websocket.module';
 		}),
 		ScheduleModule.forRoot(),
 		EventEmitterModule.forRoot({
+			wildcard: true,
 			ignoreErrors: false,
       		verboseMemoryLeak: false,
 		}),

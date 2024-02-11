@@ -45,12 +45,6 @@ export class FetchRateUsecase extends BaseUsecase<Promise<void>> {
         if (created.length <= 0) throw new ForbiddenException('Failed to create rates');
 
         const eventName = 'rate.fetched';
-        const listenerCount = this.eventEmitter.listenerCount(eventName);
-        if (listenerCount > 0) {
-            for (const data of created) {
-                const emitter = this.eventEmitter.emit(eventName, data);
-                if (!emitter) throw new ForbiddenException('Failed to send event');
-            }
-        }
+        for (const data of created) this.eventEmitter.emit(eventName, data);
     }
 }
