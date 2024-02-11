@@ -4,6 +4,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { isUUID } from "class-validator";
 import { TYPES } from "@/common/constants/transaction";
 import { AssetService } from "../asset.service";
+import BigNumber from "bignumber.js";
 
 type ClosePositionUsecaseProps = {
     asset_id: string;
@@ -38,7 +39,8 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
         });
         if (!position) throw new BadRequestException('Position not found');
         const { raw_profit, net_profit } = await this.assetService.getPositionPerformance(position_id);
-        const rawProfit = new Prisma.Decimal(raw_profit);
+        const rawProfit = BigNumber(raw_profit);
+        const amount = BigNumber(position.amount.toString());
 
         return this.prismaService.assetPosition.update({
             where: {
@@ -62,8 +64,8 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
                             }
                         },
                         type: TYPES.EXIT_POSITION,
-                        out: rawProfit.isNegative() ? (rawProfit.abs().minus(position.amount.toString()).toString()) : 0,
-                        in: rawProfit.isPositive() ? (rawProfit.toString()) : 0,
+                        out: rawProfit.lt(amount) ? (rawProfit.abs().minus(position.amount.toString()).toString()) : 0,
+                        in: rawProfit.gte(amount) ? (rawProfit.toString()) : 0,
                     }
                 }
             },
