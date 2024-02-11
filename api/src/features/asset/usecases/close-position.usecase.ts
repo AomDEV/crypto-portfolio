@@ -1,6 +1,6 @@
 import { BaseUsecase } from "@/common/shared/usecase";
 import { Account, AssetPosition, EPositionStatus } from "@prisma/client";
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { isUUID } from "class-validator";
 import { TYPES } from "@/common/constants/transaction";
 import { AssetService } from "../asset.service";
@@ -11,6 +11,7 @@ type ClosePositionUsecaseProps = {
     session: Account;
 };
 
+@Injectable()
 export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
     constructor (
         private readonly assetService: AssetService,
