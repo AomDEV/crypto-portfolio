@@ -29,9 +29,14 @@ export enum EDirection {
     SHORT = 'SHORT'
 }
 export enum EPositionStatus {
-    OPEN,
-    CLOSE
+    OPEN = 'OPEN',
+    CLOSE = 'CLOSE'
 }
+export type AssetPositionPerformance = {
+    raw_profit: string,
+    net_profit: string,
+    percentage: number
+};
 export type AssetPosition = {
     id: string,
     asset_id: string,
@@ -49,4 +54,5 @@ export type AssetPosition = {
     deleted_at?: Date,
     created_at: Date,
     updated_at: Date,
+    performance: AssetPositionPerformance,
 };
