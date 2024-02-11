@@ -1,5 +1,4 @@
 "use client";
-import CoinIcon from "@/components/coin/icon";
 import CoinItem from "@/components/coin/item";
 import { LoadingText, NoDataText } from "@/components/loading";
 import Paginator from "@/components/paginator";
