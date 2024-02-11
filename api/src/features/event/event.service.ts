@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/commo
 import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { FetchQuoteUsecase } from "./usecases/fetch-quote.usecase";
 import { FetchRateUsecase } from "./usecases/fetch-rate.usecase";
-import { Observable, fromEvent, map } from "rxjs";
+import { Observable, fromEvent, map, merge } from "rxjs";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
 @Injectable()
@@ -15,7 +15,13 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
         private readonly schedulerRegistry: SchedulerRegistry
     ) {}
 
-    subscribe<T>(eventName: string): Observable<MessageEvent<T>> {
+    subscribe<T>(eventName: string | string[]): Observable<MessageEvent<T>> {
+        if (Array.isArray(eventName)) {
+            const events = eventName.map(name => fromEvent(this.eventEmitter, name).pipe<MessageEvent<T>>(
+                map((data: T) => new MessageEvent(name, { data })),
+            ));
+            return merge(...events);
+        }
         return fromEvent(this.eventEmitter, eventName).pipe<MessageEvent<T>>(
             map((data: T) => new MessageEvent(eventName, { data })),
         );
@@ -29,13 +35,13 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
     @Cron(CronExpression.EVERY_30_SECONDS, {})
     async getQuotes () {
         const created = await this.fetchQuoteUsecase.execute();
-        return Promise.all(created.map(data => this.emit('quote.fetched', data)));
+        return Promise.all(created.map(data => this.emit('quote', data)));
     }
 
     @Cron(CronExpression.EVERY_HOUR, {})
     async getRates () {
         const created = await this.fetchRateUsecase.execute();
-        return Promise.all(created.map(data => this.emit('rate.fetched', data)));
+        return Promise.all(created.map(data => this.emit('rate', data)));
     }
 
     @Cron(CronExpression.EVERY_5_SECONDS, {})
