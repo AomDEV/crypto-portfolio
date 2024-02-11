@@ -4,8 +4,16 @@ model AssetQuote {
     id              String          @id @default(uuid())
 
     asset_id        String
+    rank            Int
+    
     price_usd       Float
+    volumn_usd      Float
+    
     price_thb       Float
+    volumn_thb      Float
+
+    percent_change  Float           @default(0)
+
 
     deleted_at      DateTime?
     created_at      DateTime        @default(now())

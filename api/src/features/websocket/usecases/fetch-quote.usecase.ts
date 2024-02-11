@@ -51,8 +51,12 @@ export class FetchQuoteUsecase extends BaseUsecase<Promise<void>> {
             return () => this.prismaService.assetQuote.create({
                 data: {
                     asset_id: asset.id,
+                    rank: parseInt(quote.rank),
                     price_usd: parseFloat(quote.priceUsd),
-                    price_thb: exchangeRate.rates[0].rate.mul(quote.priceUsd)?.toNumber(),
+                    volumn_usd: parseFloat(quote.volumeUsd24Hr),
+                    price_thb: exchangeRate.rates[0].rate.mul(quote.priceUsd)?.toNumber() ?? 0,
+                    volumn_thb: exchangeRate.rates[0].rate.mul(quote.volumeUsd24Hr)?.toNumber() ?? 0,
+                    percent_change: parseFloat(quote.changePercent24Hr),
                 }
             });
         }));
