@@ -24,7 +24,7 @@ export class EventController {
         request.on('close', (e) => {
             new Logger().warn('Connection closed', e);
         });
-        
+
         return this.subscribeUsecase.execute({event});
     }
 }
