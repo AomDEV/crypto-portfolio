@@ -7,7 +7,7 @@ export default function LoadingText () {
 }
 export function NoDataText () {
     return (
-        <div className="m-2">
+        <div className="m-2 italic text-muted-foreground">
             No data
         </div>
     )
