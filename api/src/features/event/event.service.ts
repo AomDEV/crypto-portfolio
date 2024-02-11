@@ -5,6 +5,7 @@ import { FetchRateUsecase } from "./usecases/fetch-rate.usecase";
 import { Observable, fromEvent, map, merge } from "rxjs";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { EVENT } from "./constant";
+import { createEvent } from "./helper";
 
 @Injectable()
 export class EventService implements OnModuleInit, OnModuleDestroy {
@@ -16,16 +17,16 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
         private readonly schedulerRegistry: SchedulerRegistry
     ) {}
 
-    subscribe<T>(eventName: string | string[]): Observable<MessageEvent<T>> {
+    subscribe<T>(eventName: string | string[], merged: boolean = false): Observable<MessageEvent<T>> {
         if (Array.isArray(eventName)) {
             const eventNames = eventName.length <= 0 ? Object.values(EVENT) : eventName;
             const events = eventNames.map(name => fromEvent(this.eventEmitter, name).pipe<MessageEvent<T>>(
-                map((data: T) => new MessageEvent(name, { data })),
+                map((data: T) => createEvent(name, data, merged)),
             ));
             return merge(...events);
         }
         return fromEvent(this.eventEmitter, eventName).pipe<MessageEvent<T>>(
-            map((data: T) => new MessageEvent(eventName, { data })),
+            map((data: T) => createEvent(eventName, data, merged)),
         );
     }
 
