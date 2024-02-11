@@ -45,7 +45,7 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
                 id: position.id,
             },
             data: {
-                exit_price: position.exit_price,
+                exit_price: asset.quote.price_thb,
                 profit: (net_profit.toString()),
                 status: EPositionStatus.CLOSE,
                 exited_at: new Date(),
