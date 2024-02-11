@@ -1,4 +1,5 @@
 import { cmc } from "../client";
+import { v4 as uuidv4 } from 'uuid';
 
 export default async function asset () {
     const response = await cmc().get(`/v1/cryptocurrency/listings/latest`, {
@@ -15,6 +16,7 @@ export default async function asset () {
         symbol,
         slug,
     }) => ({
+        id: uuidv4(),
         name: String(name),
         symbol: String(symbol),
         slug: String(slug),

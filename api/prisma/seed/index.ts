@@ -4,6 +4,7 @@ import account from "./data/account";
 import asset from "./data/asset";
 import currency from "./data/currency";
 import currencyRate from "./data/currency-rate";
+import transaction from "./data/transaction";
 
 async function main() {
     const seed = new Seed(prisma);
@@ -13,6 +14,9 @@ async function main() {
 
     const _assets = await asset();
     await seed.setup(prisma.asset, (tx: typeof prisma.asset) => _assets.map(asset => tx.create({ data: asset })));
+
+    const _transactions = await transaction(_accounts, _assets);
+    await seed.setup(prisma.transaction, (tx: typeof prisma.transaction) => tx.createMany({ data: _transactions}));
 
     const _currencies = await currency();
     await seed.setup(prisma.currency, (tx: typeof prisma.currency) => tx.createMany({ data: _currencies}));

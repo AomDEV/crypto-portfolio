@@ -1,7 +1,10 @@
 import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
+
 export default function account () {
     return [
         {
+            id: uuidv4(),
             first_name: 'John',
             last_name: 'Doe',
             username: 'john',
