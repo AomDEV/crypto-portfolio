@@ -16,7 +16,7 @@ export type Asset = {
     slug: string,
     symbol: string,
     decimals: 18,
-    icon_id: string | null,
+    icon_id: string,
     deleted_at: Date | null,
     created_at: Date,
     updated_at: Date,
@@ -25,8 +25,8 @@ export type Asset = {
 };
 
 export enum EDirection {
-    LONG,
-    SHORT
+    LONG = 'LONG',
+    SHORT = 'SHORT'
 }
 export enum EPositionStatus {
     OPEN,
