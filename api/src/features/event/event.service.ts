@@ -9,6 +9,7 @@ import { EVENT } from "./constant";
 @Injectable()
 export class EventService implements OnModuleInit, OnModuleDestroy {
     private readonly logger: Logger = new Logger(EventService.name);
+    private events: string[] = [];
     constructor (
         private readonly eventEmitter: EventEmitter2,
         private readonly fetchQuoteUsecase: FetchQuoteUsecase,
@@ -16,9 +17,16 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
         private readonly schedulerRegistry: SchedulerRegistry
     ) {}
 
+    private addEvent(eventName: string) {
+        const index = this.events.push(eventName);
+        this.events = this.events.filter((value, index, self) => self.indexOf(value) === index);
+        return index;
+    }
+
     subscribe<T>(eventName: string | string[]): Observable<MessageEvent<T>> {
         if (Array.isArray(eventName)) {
-            const events = Object.values(EVENT).map(name => fromEvent(this.eventEmitter, name).pipe<MessageEvent<T>>(
+            const eventNames = eventName.length <= 0 ? this.events : eventName;
+            const events = eventNames.map(name => fromEvent(this.eventEmitter, name).pipe<MessageEvent<T>>(
                 map((data: T) => new MessageEvent(name, { data })),
             ));
             return merge(...events);
@@ -36,19 +44,30 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
     @Cron(CronExpression.EVERY_30_SECONDS, {})
     async getQuotes () {
         const created = await this.fetchQuoteUsecase.execute();
-        return Promise.all(created.map(data => this.emit([EVENT.QUOTE, `${EVENT.QUOTE}:${data.asset_id}`], data)));
+        return Promise.all(created.map(data => {
+            const signatureEvent = `${EVENT.QUOTE}:${data.asset_id}`;
+            this.addEvent(signatureEvent);
+            return this.emit([EVENT.QUOTE, signatureEvent], data)
+        }));
     }
 
     @Cron(CronExpression.EVERY_HOUR, {})
     async getRates () {
         const created = await this.fetchRateUsecase.execute();
-        return Promise.all(created.map(data => this.emit([EVENT.RATE, `${EVENT.RATE}:${data.currency_id}`], data)));
+        return Promise.all(created.map(data => {
+            const signatureEvent = `${EVENT.RATE}:${data.currency_id}`;
+            this.addEvent(signatureEvent);
+            return this.emit([EVENT.RATE, signatureEvent], data)
+        }));
     }
 
     @Cron(CronExpression.EVERY_5_SECONDS, {})
     async getHeartbeat () {
-        const time = new Date().getTime();
-        return this.emit(EVENT.HEARTBEAT, {time});
+        const signatureEvent = EVENT.HEARTBEAT;
+        this.addEvent(signatureEvent);
+        return this.emit(signatureEvent, {
+            time: new Date().getTime()
+        });
     }
 
     async onModuleInit() {
