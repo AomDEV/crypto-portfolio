@@ -11,10 +11,10 @@ model AssetPosition {
 
     leverage        Int
     direction       EDirection      @default(LONG)
-    amount          BigInt
+    amount          Decimal?        @db.Decimal(100, 0)
     entry_price     Decimal         @db.Money
     exit_price      Decimal?        @db.Money
-    profit          BigInt?
+    profit          Decimal?        @db.Decimal(100, 0)
     
     status          EPositionStatus @default(OPEN)
 

@@ -44,7 +44,7 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
             },
             data: {
                 exit_price: position.exit_price,
-                profit: BigInt(net_profit.toString()),
+                profit: (net_profit.toString()),
                 status: EPositionStatus.CLOSE,
                 exited_at: new Date(),
                 close_tx: {
@@ -60,8 +60,8 @@ export class ClosePositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
                             }
                         },
                         type: TYPES.EXIT_POSITION,
-                        out: raw_profit.isNegative() ? BigInt(raw_profit.abs().minus(position.amount.toString()).toString()) : 0,
-                        in: raw_profit.isPositive() ? BigInt(raw_profit.toString()) : 0,
+                        out: raw_profit.isNegative() ? (raw_profit.abs().minus(position.amount.toString()).toString()) : 0,
+                        in: raw_profit.isPositive() ? (raw_profit.toString()) : 0,
                     }
                 }
             },

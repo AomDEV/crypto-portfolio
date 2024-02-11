@@ -72,7 +72,7 @@ export class OpenPositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
                             }
                         },
                         type: TYPES.ENTRY_POSITION,
-                        out: BigInt(amount),
+                        out: (amount),
                         in: 0
                     }
                 },

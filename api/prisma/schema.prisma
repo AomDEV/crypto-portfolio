@@ -79,10 +79,10 @@ model AssetPosition {
 
   leverage    Int
   direction   EDirection @default(LONG)
-  amount      BigInt
+  amount      Decimal?   @db.Decimal(100, 0)
   entry_price Decimal    @db.Money
   exit_price  Decimal?   @db.Money
-  profit      BigInt?
+  profit      Decimal?   @db.Decimal(100, 0)
 
   status EPositionStatus @default(OPEN)
 
@@ -112,11 +112,11 @@ model AssetQuote {
 
   asset_id String
 
-  price_usd  Float
-  volume_usd Float
+  price_usd  Decimal @db.Money
+  volume_usd Decimal @db.Money
 
-  price_thb  Float
-  volume_thb Float
+  price_thb  Decimal @db.Money
+  volume_thb Decimal @db.Money
 
   percent_change Float @default(0)
 
@@ -225,8 +225,8 @@ model Transaction {
   user_id     String
   type        String
   description String?
-  in          BigInt
-  out         BigInt
+  in          Decimal @db.Decimal(100, 0)
+  out         Decimal @db.Decimal(100, 0)
 
   deleted_at DateTime?
   created_at DateTime  @default(now())
