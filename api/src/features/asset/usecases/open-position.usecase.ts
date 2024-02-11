@@ -33,15 +33,7 @@ export class OpenPositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
         if (BigNumber(amount).isLessThanOrEqualTo(0)) throw new BadRequestException('Amount must be greater than 0');
 
         const asset = await this.assetService.getAsset(asset_id);
-
-        const quotes = await cmc().get('/v2/cryptocurrency/quotes/latest', {
-            params: {
-                symbol: asset.symbol,
-                convert: 'THB',
-            }
-        }).catch(() => null);
-        const quote = quotes.data?.data?.[asset.symbol]?.quote?.THB?.price ?? 0;
-        if (quote <= 0) throw new NotFoundException('Quote not found');
+        if (!asset.quote) throw new NotFoundException('Quote not found');
 
         return this.prismaService.assetPosition.create({
             data: {
@@ -58,7 +50,7 @@ export class OpenPositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
                 leverage,
                 direction,
                 amount: new Prisma.Decimal(amount),
-                entry_price: quote,
+                entry_price: asset.quote.price_thb,
                 status: EPositionStatus.OPEN,
                 open_tx: {
                     create: {
