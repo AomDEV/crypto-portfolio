@@ -1,6 +1,6 @@
 import { BaseUsecase } from "@/common/shared/usecase";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Account } from "@prisma/client";
+import { Account, Prisma } from "@prisma/client";
 import BigNumber from "bignumber.js";
 import { AssetService } from "../asset.service";
 
@@ -41,8 +41,8 @@ export class CoinBalanceUsecase extends BaseUsecase<Promise<any>> {
             }
         });
         const { in: inAmount, out: outAmount } = aggregate;
-        const balance = BigNumber(inAmount?.toString() ?? "0").minus(BigNumber(outAmount?.toString() ?? "0"));
-        const fiat = quote ? balance.multipliedBy(quote.price_thb).toNumber() : 0;
+        const balance = new Prisma.Decimal(BigNumber(inAmount?.toString() ?? "0").minus(BigNumber(outAmount?.toString() ?? "0")).toString());
+        const fiat = quote ? quote.price_thb.mul(balance).toNumber() : 0;
         
         return {
             quote,

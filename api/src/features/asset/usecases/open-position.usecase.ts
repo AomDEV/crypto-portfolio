@@ -1,5 +1,5 @@
 import { BaseUsecase } from "@/common/shared/usecase";
-import { Account, AssetPosition, EPositionStatus } from "@prisma/client";
+import { Account, AssetPosition, EPositionStatus, Prisma } from "@prisma/client";
 import { OpenPositionDTO } from "../dto/open-position.dto";
 import BigNumber from "bignumber.js";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
@@ -56,7 +56,7 @@ export class OpenPositionUsecase extends BaseUsecase<Promise<AssetPosition>> {
                 },
                 leverage,
                 direction,
-                amount: BigInt(amount),
+                amount: new Prisma.Decimal(amount),
                 entry_price: quote,
                 status: EPositionStatus.OPEN,
                 open_tx: {
