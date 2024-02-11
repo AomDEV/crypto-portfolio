@@ -1,7 +1,7 @@
 import { BaseUsecase } from "@/common/shared/usecase";
 import { Account } from "@prisma/client";
 import { AssetService } from "../asset.service";
-import { NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 
 type GetPositionUsecaseProps = {
     asset_id: string;
@@ -11,6 +11,7 @@ type GetPositionUsecaseProps = {
     session: Account;
 };
 
+@Injectable()
 export class GetPositionUsecase extends BaseUsecase<Promise<any>> {
     constructor (
         private readonly assetService: AssetService,
@@ -48,7 +49,6 @@ export class GetPositionUsecase extends BaseUsecase<Promise<any>> {
                 deleted_at: null,
             },
             orderBy: {
-                exited_at: 'asc',
                 created_at: 'desc',
             },
         }).withPages({ page, limit });
