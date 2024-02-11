@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SseProvider } from "@/context/sse";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
 				<SseProvider>
 					{children}
 				</SseProvider>
+				<Toaster />
 			</body>
 		</html>
 	);
