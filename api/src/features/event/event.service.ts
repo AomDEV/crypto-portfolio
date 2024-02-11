@@ -9,7 +9,6 @@ import { EVENT } from "./constant";
 @Injectable()
 export class EventService implements OnModuleInit, OnModuleDestroy {
     private readonly logger: Logger = new Logger(EventService.name);
-    private events: string[] = [];
     constructor (
         private readonly eventEmitter: EventEmitter2,
         private readonly fetchQuoteUsecase: FetchQuoteUsecase,
@@ -17,15 +16,9 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
         private readonly schedulerRegistry: SchedulerRegistry
     ) {}
 
-    private addEvent(eventName: string) {
-        const index = this.events.push(eventName);
-        this.events = this.events.filter((value, index, self) => self.indexOf(value) === index);
-        return index;
-    }
-
     subscribe<T>(eventName: string | string[]): Observable<MessageEvent<T>> {
         if (Array.isArray(eventName)) {
-            const eventNames = eventName.length <= 0 ? this.events : eventName;
+            const eventNames = eventName.length <= 0 ? Object.values(EVENT) : eventName;
             const events = eventNames.map(name => fromEvent(this.eventEmitter, name).pipe<MessageEvent<T>>(
                 map((data: T) => new MessageEvent(name, { data })),
             ));
@@ -45,9 +38,7 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
     async getQuotes () {
         const created = await this.fetchQuoteUsecase.execute();
         return Promise.all(created.map(data => {
-            const signatureEvent = `${EVENT.QUOTE}:${data.asset_id}`;
-            this.addEvent(signatureEvent);
-            return this.emit([EVENT.QUOTE, signatureEvent], data)
+            return this.emit([EVENT.QUOTE], data)
         }));
     }
 
@@ -55,17 +46,13 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
     async getRates () {
         const created = await this.fetchRateUsecase.execute();
         return Promise.all(created.map(data => {
-            const signatureEvent = `${EVENT.RATE}:${data.currency_id}`;
-            this.addEvent(signatureEvent);
-            return this.emit([EVENT.RATE, signatureEvent], data)
+            return this.emit([EVENT.RATE], data)
         }));
     }
 
     @Cron(CronExpression.EVERY_5_SECONDS, {})
     async getHeartbeat () {
-        const signatureEvent = EVENT.HEARTBEAT;
-        this.addEvent(signatureEvent);
-        return this.emit(signatureEvent, {
+        return this.emit(EVENT.HEARTBEAT, {
             time: new Date().getTime()
         });
     }
