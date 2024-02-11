@@ -1,5 +1,4 @@
 import { api } from "@/lib/api";
-import { PaginationMeta } from "@/types/pagination";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { UseAssetOptions } from "./types";
 import { Asset } from "@/types/schema";
