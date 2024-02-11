@@ -23,3 +23,30 @@ export type Asset = {
     balance?: string,
     quote?: AssetQuote,
 };
+
+export enum EDirection {
+    LONG,
+    SHORT
+}
+export enum EPositionStatus {
+    OPEN,
+    CLOSE
+}
+export type AssetPosition = {
+    id: string,
+    asset_id: string,
+    user_id: string,
+    leverage: number,
+    direction: EDirection,
+    amount: string,
+    entry_price: string,
+    exit_price?: string,
+    profit?: string
+    status: EPositionStatus,
+    open_tx_id: string,
+    close_tx_id?: string,
+    exited_at?: Date,
+    deleted_at?: Date,
+    created_at: Date,
+    updated_at: Date,
+};
