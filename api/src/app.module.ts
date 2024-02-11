@@ -11,7 +11,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 // @features
 import { AuthenticationModule } from '@/features/authentication/authentication.module';
 import { AssetModule } from '@/features/asset/asset.module';
-import { WebSocketModule } from '@/features/websocket/websocket.module';
+import { EventModule } from '@/features/event/event.module';
 
 @Module({
 	imports: [
@@ -22,12 +22,11 @@ import { WebSocketModule } from '@/features/websocket/websocket.module';
 		}),
 		ScheduleModule.forRoot(),
 		EventEmitterModule.forRoot({
-			wildcard: true,
-			ignoreErrors: false,
+			ignoreErrors: true,
       		verboseMemoryLeak: false,
 		}),
 
-		WebSocketModule,
+		EventModule,
 		AuthenticationModule,
 		AssetModule,
 	],

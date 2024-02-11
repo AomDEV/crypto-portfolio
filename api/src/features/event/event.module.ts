@@ -1,18 +1,17 @@
 import { Module } from "@nestjs/common";
 import { FetchQuoteUsecase } from "./usecases/fetch-quote.usecase";
-import { WebSocketService } from "./websocket.service";
+import { EventService } from "./event.service";
 import { FetchRateUsecase } from "./usecases/fetch-rate.usecase";
-import { WebSocketGateway } from "./websocket.gateway";
+import { EventController } from "./event.controller";
 
 @Module({
     imports: [],
-    controllers: [],
+    controllers: [EventController],
     providers: [
-        WebSocketGateway,
-        WebSocketService,
+        EventService,
         
         FetchQuoteUsecase,
         FetchRateUsecase,
     ],
 })
-export class WebSocketModule {}
+export class EventModule {}

@@ -1,20 +1,19 @@
 import { oxr } from "@/common/shared/api";
 import { BaseUsecase } from "@/common/shared/usecase";
-import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { Prisma } from "@prisma/client";
+import { ForbiddenException, Injectable, Logger, Scope } from "@nestjs/common";
+import { CurrencyRate, Prisma } from "@prisma/client";
 
-@Injectable()
-export class FetchRateUsecase extends BaseUsecase<Promise<void>> {
+@Injectable({
+    scope: Scope.TRANSIENT,
+})
+export class FetchRateUsecase extends BaseUsecase<Promise<Array<CurrencyRate>>> {
     private readonly logger: Logger = new Logger(FetchRateUsecase.name);
 
-    constructor (
-        private readonly eventEmitter: EventEmitter2
-    ) {
+    constructor () {
         super();
     }
 
-    async execute(): Promise<void> {
+    async execute(): Promise<Array<CurrencyRate>> {
         const currencies = await this.prismaService.currency.findMany({
             where: {
                 deleted_at: null,
@@ -44,7 +43,6 @@ export class FetchRateUsecase extends BaseUsecase<Promise<void>> {
         const created = await this.prismaService.$transaction(transactions.filter(tx => typeof tx === "function").map(tx => tx()));
         if (created.length <= 0) throw new ForbiddenException('Failed to create rates');
 
-        const eventName = 'rate.fetched';
-        for (const data of created) this.eventEmitter.emit(eventName, data);
+        return created;
     }
 }
