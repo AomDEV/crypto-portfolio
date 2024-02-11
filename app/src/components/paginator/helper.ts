@@ -16,7 +16,7 @@ export function createPagination({
 			type: "page",
 			value: totalPages
 		};
-		const pages: CreatePaginationHelperMetadata[] = range(totalPages).map(value => ({
+		const pages: CreatePaginationHelperMetadata[] = range(Math.max(1, totalPages)).map(value => ({
 	    type: "page",
 	    value
     }));
