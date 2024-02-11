@@ -3,7 +3,6 @@ import { Account, AssetPosition, EPositionStatus, Prisma } from "@prisma/client"
 import { OpenPositionDTO } from "../dto/open-position.dto";
 import BigNumber from "bignumber.js";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { cmc } from "@/common/shared/api";
 import { TYPES } from "@/common/constants/transaction";
 import { isUUID } from "class-validator";
 import { AssetService } from "../asset.service";
