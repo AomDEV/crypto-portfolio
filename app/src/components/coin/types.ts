@@ -1,3 +1,5 @@
+import { AssetQuote } from "@/types/schema";
+
 export type CoinIconProps = {
     iconId: string | null;
     symbol: string;
@@ -9,7 +11,7 @@ export type CoinItemProps = {
     name: string;
     symbol: string;
     iconId: string | null;
-    price: number;
+    quote?: AssetQuote;
     decimals: number;
     currency?: string;
     showBalance?: boolean;
