@@ -53,7 +53,7 @@ export class GetPositionUsecase extends BaseUsecase<Promise<any>> {
             },
         }).withPages({ page, limit });
         return {
-            data: Promise.all(data.map(async (position) => ({
+            data: await Promise.all(data.map(async (position) => ({
                 ...position,
                 performance: await this.assetService.getPositionProfit(position.id)
             }))),
