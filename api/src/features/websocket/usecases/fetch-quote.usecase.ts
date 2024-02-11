@@ -53,9 +53,9 @@ export class FetchQuoteUsecase extends BaseUsecase<Promise<void>> {
                     asset_id: asset.id,
                     rank: parseInt(quote?.rank ?? "0"),
                     price_usd: parseFloat(quote?.priceUsd ?? "0"),
-                    volumn_usd: parseFloat(quote?.volumeUsd24Hr ?? "0"),
+                    volume_usd: parseFloat(quote?.volumeUsd24Hr ?? "0"),
                     price_thb: exchangeRate.rates[0].rate.mul(quote?.priceUsd ?? 0)?.toNumber() ?? 0,
-                    volumn_thb: exchangeRate.rates[0].rate.mul(quote?.volumeUsd24Hr ?? 0)?.toNumber() ?? 0,
+                    volume_thb: exchangeRate.rates[0].rate.mul(quote?.volumeUsd24Hr ?? 0)?.toNumber() ?? 0,
                     percent_change: parseFloat(quote?.changePercent24Hr ?? "0"),
                 }
             });
