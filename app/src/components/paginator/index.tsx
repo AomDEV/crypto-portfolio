@@ -60,7 +60,7 @@ export default function Paginator({
 				</Pagination>
 				{!noMeta && (
 					<p className="text-center text-sm p-2 text-muted-foreground">
-						Showing <b>{perPage} of {totalItems}</b> items
+						Showing <b>{Math.min(totalItems, perPage)} of {totalItems}</b> items
 					</p>
 				)}
 			</div>
