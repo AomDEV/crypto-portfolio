@@ -16,7 +16,7 @@ export default function MemberLayout({
             localStorage.clear();
             return router.push('/login');
         }
-    }, []);
+    }, [router]);
     return (
         <main className="min-h-screen flex flex-col justify-center items-center m-2">
             <div className="w-full max-w-xl">

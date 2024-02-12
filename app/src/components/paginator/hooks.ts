@@ -19,19 +19,19 @@ export function usePagination({
 		if (page <= 0 || page > totalPages) return;
 		params.set('page', String(page));
 		return replace([pathname, params.toString()].filter(Boolean).join("?"));
-	}, [searchParams, pathname]);
+	}, [searchParams, pathname, replace, setCurrentPage]);
 
 	// Go to next page
 	const onNextPage = useCallback(() => {
 		if (currentPage === totalPages) return;
 		return goToPage(currentPage + 1);
-	}, [currentPage]);
+	}, [currentPage, totalPages, goToPage]);
 
 	// Go to previous page
 	const onPrevPage = useCallback(() => {
 		if (currentPage === 1) return;
 		return goToPage(currentPage - 1);
-	}, [currentPage]);
+	}, [currentPage, totalPages, goToPage]);
 
 	return {
 		searchParams,

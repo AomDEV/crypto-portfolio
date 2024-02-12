@@ -26,7 +26,7 @@ export function useAsset (options: UseAssetOptions) {
     }, [assetId]);
     useEffect(() => {
         if (callOnMount) fetch();
-    }, [assetId]);
+    }, [callOnMount, fetch]);
 
     return {
         data,

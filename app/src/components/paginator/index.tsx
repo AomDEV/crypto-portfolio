@@ -42,7 +42,7 @@ export default function Paginator({
 		return (<Link href="#" isActive={isActive} onClick={onClick}>
 			{metadata.value}
 		</Link>);
-	}, [currentPage]);
+	}, [currentPage, onNextPage, onPrevPage, goToPage]);
 
 	return (
 		<Fragment>

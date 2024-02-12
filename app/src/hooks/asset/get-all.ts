@@ -35,10 +35,10 @@ export function useAssets (options: UseAssetsOptions = {}) {
         }).finally(() => {
             setIsLoading(false);
         })
-    }, [_page, limit]);
+    }, [limit]);
     useEffect(() => {
         if (callOnMount) fetch(_page ?? 1);
-    }, [_page, limit]);
+    }, [_page, callOnMount, fetch]);
 
     return {
         data,

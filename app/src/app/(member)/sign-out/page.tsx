@@ -8,6 +8,6 @@ export default function Page () {
     useEffect(() => {
         localStorage.clear();
         return router.push('/login');
-    }, []);
+    }, [router]);
     return <LoadingText />
 }

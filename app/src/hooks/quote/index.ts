@@ -19,7 +19,7 @@ export function useQuote ({
             setQuote(_message);
         });
         return () => unsubscribe(EVENT_NAME);
-    }, [assetId, subscribe, unsubscribe]);
+    }, [assetId, callOnMount, subscribe, unsubscribe]);
     useEffect(() => {
         if (!defaultQuote) return;
         setQuote(defaultQuote ?? null);

@@ -22,7 +22,7 @@ export function useBalance ({
     }, [assetId]);
     useEffect(() => {
         if (callOnMount) fetch();
-    }, [assetId]);
+    }, [callOnMount, fetch]);
 
     return {
         data,

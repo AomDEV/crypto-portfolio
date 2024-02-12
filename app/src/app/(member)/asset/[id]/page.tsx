@@ -70,7 +70,7 @@ function OpenPositionDialog({
     })
     const updateAmountPercentage = useCallback((value: string) => {
         form.setValue('amount', Number(formatUnits(value, decimals)).toFixed(2))
-    }, [form]);
+    }, [form, decimals]);
     const { quote } = useQuote({ assetId, defaultQuote })
 
     return (
@@ -220,7 +220,7 @@ export default function Page() {
             }).finally(() => setSubmitLoading(false));
         };
         return open().finally(() => Promise.all([fetch(currentPage), balanceFetch()]));
-    }, [data, fetch, balanceFetch, currentPage]);
+    }, [id, data, fetch, balanceFetch, toast, currentPage]);
     const closePosition = useCallback((positionId: string) => {
         const close = async () => {
             if (!data) return;
@@ -239,7 +239,7 @@ export default function Page() {
             }).finally(() => setSubmitLoading(false));
         };
         return close().finally(() => Promise.all([fetch(currentPage), balanceFetch()]));
-    }, [data, fetch, balanceFetch, currentPage])
+    }, [id, data, fetch, balanceFetch, toast, currentPage])
 
     const coinBalance = useMemo(() => {
         if (!balance) return 0;

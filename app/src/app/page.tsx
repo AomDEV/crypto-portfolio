@@ -10,6 +10,6 @@ export default function Page () {
         const accessToken = localStorage.getItem('access_token');
         if (!accessToken) return router.push('/login');
         return router.push('/portfolio');
-    }, []);
+    }, [router]);
     return <LoadingText />
 }

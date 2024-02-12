@@ -29,7 +29,7 @@ export default function CoinItem ({
     const coinBalance = useMemo(() => {
         if (!data) return 0;
         return toReadable(data.balance, decimals).toNumber();
-    }, [data])
+    }, [data, decimals])
 
     return (
         <Link

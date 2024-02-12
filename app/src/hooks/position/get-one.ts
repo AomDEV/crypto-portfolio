@@ -23,10 +23,10 @@ export function usePosition (options: UsePositionOptions) {
         }).finally(() => {
             setIsLoading(false);
         })
-    }, [assetId]);
+    }, [assetId, positionId]);
     useEffect(() => {
         if (callOnMount) fetch();
-    }, [assetId]);
+    }, [callOnMount, fetch]);
 
     return {
         data,
