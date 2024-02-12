@@ -6,6 +6,7 @@ import { useBalance } from "@/hooks/balance";
 import { LoadingText } from "../loading";
 import { useQuote } from "@/hooks/quote";
 import { useMemo } from "react";
+import { toReadable } from "@/lib/big-number";
 
 export default function CoinItem ({
     assetId,
@@ -25,7 +26,10 @@ export default function CoinItem ({
         assetId,
         callOnMount: showBalance
     });
-    const coinBalance = useMemo(() => Number(data ? formatUnits(data.balance, decimals) : "0"), [data])
+    const coinBalance = useMemo(() => {
+        if (!data) return 0;
+        return toReadable(data.balance, decimals).toNumber();
+    }, [data])
 
     return (
         <Link

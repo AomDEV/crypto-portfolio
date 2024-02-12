@@ -25,6 +25,7 @@ import { isEnum } from "class-validator"
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast"
 import PositionItem from "@/components/position/item";
+import { toReadable } from "@/lib/big-number";
 
 const formSchema = z.object({
     leverage: z.number().min(1, {
@@ -240,7 +241,10 @@ export default function Page() {
         return close().finally(() => Promise.all([fetch(currentPage), balanceFetch()]));
     }, [data, fetch, balanceFetch, currentPage])
 
-    const coinBalance = useMemo(() => balance && data ? parseFloat(formatUnits(balance.balance ?? "0", data.decimals)) : 0, [balance, data])
+    const coinBalance = useMemo(() => {
+        if (!balance) return 0;
+        return toReadable(balance.balance ?? "0", data?.decimals ?? 18).toNumber();
+    }, [balance, data])
 
     if (isLoading) return <LoadingText />;
     if (!data || noData) return <NoDataText />;
