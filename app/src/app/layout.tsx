@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { SseProvider } from "@/context/sse";
 import { Toaster } from "@/components/ui/toaster";
+import { Suspense } from "react";
+import { LoadingText } from "@/components/loading";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +21,11 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={inter.className}>
-				<SseProvider>
-					{children}
-				</SseProvider>
+				<Suspense fallback={<LoadingText />}>
+					<SseProvider>
+						{children}
+					</SseProvider>
+				</Suspense>
 				<Toaster />
 				<footer className="text-center text-muted-foreground text-sm m-2">
 					&copy; 2024 - Siriwat Janke
