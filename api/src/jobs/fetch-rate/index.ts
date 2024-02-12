@@ -1,13 +1,17 @@
 import { BullModule } from "@nestjs/bull";
 import { BullBoardModule } from "@bull-board/nestjs";
 import { BullAdapter } from "@bull-board/api/bullAdapter";
-import { FetchRateConsumer } from "./processor";
-import { join } from "path";
+import processor, { FetchRateConsumer } from "./processor";
 
 export const NAME = 'fetch-rate';
 export const MODULE = BullModule.registerQueue({
     name: NAME,
-    processors: [join(__dirname, 'processor.js')],
+    processors: [
+        {
+            name: NAME,
+            callback: processor,
+        }
+    ],
 });
 export const FEATURE = BullBoardModule.forFeature({
     name: NAME,

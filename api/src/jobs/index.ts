@@ -26,7 +26,7 @@ export const ROUTE = '/queues';
 export const NAMES = JOBS.map((job) => job.NAME);
 export const MODULES = JOBS.map((job) => job.MODULE).flat();
 export const FEATURES = JOBS.map((job) => job.FEATURE).flat();
-export const PROVIDERS = JOBS.map((job) => job.PROVIDER).flat()
+// export const PROVIDERS = JOBS.map((job) => job.PROVIDER).flat()
 
 @Module({})
 export class JobsModule implements NestModule, OnModuleInit {
@@ -40,14 +40,9 @@ export class JobsModule implements NestModule, OnModuleInit {
                 BullModule(),
                 BullBoardModule()
             ] as Array<Type<any> | DynamicModule>).concat(MODULES).concat(FEATURES),
-            providers: (PROVIDERS as Array<Type<any> | Provider>)
+            providers: ([] as Array<Type<any> | Provider>)
                 .concat(MODULES.map((module) => module.providers).flat())
-                .concat(NAMES.map((name) => {
-                    return {
-                        provide: `${name.toUpperCase()}_LISTENER`,
-                        useClass: createListener(name)
-                    };
-                })),
+                .concat(NAMES.map(createListener)),
             exports: MODULES.map((module) => module.exports).flat()
         }
     }

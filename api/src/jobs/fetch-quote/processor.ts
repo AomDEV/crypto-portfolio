@@ -35,8 +35,9 @@ export class FetchQuoteConsumer implements IConsumer<unknown> {
             },
         });
         if (!exchangeRate || exchangeRate.rates.length <= 0) throw new ForbiddenException('Failed to fetch exchange rate');
+        const [{rate}] = exchangeRate.rates;
 
-        const transactions: Array<() => Prisma.PrismaPromise<any>> = await Promise.all(assets.map(async (asset) => {
+        const transactions: Array<() => Prisma.PrismaPromise<any>> = await Promise.all(assets.map(async (asset, index) => {
             const { data: quotes } = await coincap().get(`/v2/assets`, {
                 params: {
                     search: asset.symbol,
@@ -55,13 +56,14 @@ export class FetchQuoteConsumer implements IConsumer<unknown> {
                     rank: parseInt(quote?.rank ?? "0"),
                 },
             });
+            await job.progress((index/assets.length) * 100)
             return () => prisma.assetQuote.create({
                 data: {
                     asset_id: updated.id,
                     price_usd: parseFloat(quote?.priceUsd ?? "0"),
                     volume_usd: parseFloat(quote?.volumeUsd24Hr ?? "0"),
-                    price_thb: exchangeRate.rates[0].rate.mul(quote?.priceUsd ?? 0)?.toNumber() ?? 0,
-                    volume_thb: exchangeRate.rates[0].rate.mul(quote?.volumeUsd24Hr ?? 0)?.toNumber() ?? 0,
+                    price_thb: rate.mul(quote?.priceUsd ?? 0)?.toNumber() ?? 0,
+                    volume_thb: rate.mul(quote?.volumeUsd24Hr ?? 0)?.toNumber() ?? 0,
                     percent_change: parseFloat(quote?.changePercent24Hr ?? "0"),
                 }
             });
@@ -69,6 +71,7 @@ export class FetchQuoteConsumer implements IConsumer<unknown> {
 
         const created = await prisma.$transaction(transactions.filter(tx => typeof tx === "function").map(tx => tx()));
         if (created.length <= 0) throw new ForbiddenException('Failed to create quotes');
+        await job.progress(100);
         await Promise.all([this.logger.log(`Done`), job.log(`Done`)]);
 
         return created;

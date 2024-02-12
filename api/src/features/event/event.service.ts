@@ -40,13 +40,17 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
     @Cron(CronExpression.EVERY_30_SECONDS, {})
     async getQuotes () {
         // send to queue `fetch-quote`
-        await this.fetchQuoteQueue.add({}, {});
+        const job = await this.fetchQuoteQueue.add(FETCH_QUOTE, {}, {});
+        if (!job) return;
+        this.logger.debug(`Emitting '${job.name}' with job #${job.id}`);
     }
 
     @Cron(CronExpression.EVERY_HOUR, {})
     async getRates () {
         // send to queue `fetch-rate`
-        await this.fetchRateQueue.add({}, {});
+        const job = await this.fetchRateQueue.add(FETCH_RATE, {}, {});
+        if (!job) return;
+        this.logger.debug(`Emitting '${job.name}' with job #${job.id}`);
     }
 
     @Cron(CronExpression.EVERY_5_SECONDS, {})
