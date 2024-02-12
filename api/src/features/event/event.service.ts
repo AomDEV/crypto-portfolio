@@ -1,19 +1,21 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Cron, CronExpression, SchedulerRegistry } from "@nestjs/schedule";
-import { FetchQuoteUsecase } from "./usecases/fetch-quote.usecase";
-import { FetchRateUsecase } from "./usecases/fetch-rate.usecase";
 import { Observable, fromEvent, map, merge } from "rxjs";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { EVENT } from "./constant";
 import { createEvent } from "./helper";
+import { InjectQueue } from "@nestjs/bull";
+import { NAME as FETCH_QUOTE } from "@/jobs/fetch-quote";
+import { NAME as FETCH_RATE } from "@/jobs/fetch-rate";
+import { Queue } from "bull";
 
 @Injectable()
 export class EventService implements OnModuleInit, OnModuleDestroy {
     private readonly logger: Logger = new Logger(EventService.name);
     constructor (
         private readonly eventEmitter: EventEmitter2,
-        private readonly fetchQuoteUsecase: FetchQuoteUsecase,
-        private readonly fetchRateUsecase: FetchRateUsecase,
+        @InjectQueue(FETCH_QUOTE) private readonly fetchQuoteQueue: Queue,
+        @InjectQueue(FETCH_RATE) private readonly fetchRateQueue: Queue,
         private readonly schedulerRegistry: SchedulerRegistry
     ) {}
 
@@ -37,18 +39,14 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
 
     @Cron(CronExpression.EVERY_30_SECONDS, {})
     async getQuotes () {
-        const created = await this.fetchQuoteUsecase.execute();
-        return Promise.all(created.map(data => {
-            return this.emit([EVENT.QUOTE], data)
-        }));
+        // send to queue `fetch-quote`
+        await this.fetchQuoteQueue.add({}, {});
     }
 
     @Cron(CronExpression.EVERY_HOUR, {})
     async getRates () {
-        const created = await this.fetchRateUsecase.execute();
-        return Promise.all(created.map(data => {
-            return this.emit([EVENT.RATE], data)
-        }));
+        // send to queue `fetch-rate`
+        await this.fetchRateQueue.add({}, {});
     }
 
     @Cron(CronExpression.EVERY_5_SECONDS, {})

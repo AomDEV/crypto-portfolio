@@ -12,6 +12,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthenticationModule } from '@/features/authentication/authentication.module';
 import { AssetModule } from '@/features/asset/asset.module';
 import { EventModule } from '@/features/event/event.module';
+import { JobsModule } from './jobs';
 
 @Module({
 	imports: [
@@ -26,6 +27,7 @@ import { EventModule } from '@/features/event/event.module';
       		verboseMemoryLeak: false,
 			maxListeners: 100,
 		}),
+		JobsModule.register(),
 
 		EventModule,
 		AuthenticationModule,
