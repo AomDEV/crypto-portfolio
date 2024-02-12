@@ -12,7 +12,7 @@ import usePaginator from "@/components/paginator/hooks";
 import Paginator from "@/components/paginator";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { DialogClose, DialogTitle } from "@radix-ui/react-dialog";
-import { AssetPosition, AssetQuote, EDirection, EPositionStatus } from "@/types/schema";
+import { AssetPosition, AssetQuote, EDirection } from "@/types/schema";
 import { Slider } from "@/components/ui/slider";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ import { useBalance } from "@/hooks/balance";
 import { isEnum } from "class-validator"
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ui/use-toast"
-import moment from "moment";
+import PositionItem from "@/components/position/item";
 
 const formSchema = z.object({
     leverage: z.number().min(1, {
@@ -334,50 +334,14 @@ export default function Page() {
                             if (positionLoading) return <LoadingText />;
                             if (positionNoData) return <NoDataText />;
                             return (positions ?? []).map((position, index) => (
-                                <div className="border w-full rounded-lg p-2" key={index}>
-                                    <div className="flex gap-2 items-center">
-                                        <div className="flex items-center gap-2">
-                                            <CoinIcon iconId={data.icon_id} symbol={data.symbol} width={16} height={16} />
-                                            <div className="font-bold">{data.name}</div>
-                                            <small>{data.symbol}</small>
-                                        </div>
-                                        <div className="text-sm text-muted-foreground flex-1 text-right">
-                                            {moment(position.created_at).format('DD-MM-YYYY HH:mm:ss')}
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div>
-                                            <div className="flex gap-2 items-center text-muted-foreground text-sm">
-                                                <div className="w-20">Entry Price</div>
-                                                <div className="font-bold">{Number(position.entry_price).toLocaleString(undefined, { minimumFractionDigits: 2 })} THB</div>
-                                            </div>
-                                            <div className="flex gap-2 items-center text-muted-foreground text-sm">
-                                                <div className="w-20">Amount</div>
-                                                <div className="font-bold">{Number(formatUnits(position.amount, data.decimals)).toFixed(2)} {data.symbol}</div>
-                                            </div>
-                                        </div>
-                                        <div className={`text-right flex-1 ${Number(position.performance.percentage) > 0 ? 'text-green-700' : 'text-red-700'}`}>
-                                            <div className="font-bold text-lg">
-                                                {position.performance.percentage.toLocaleString(undefined, { minimumFractionDigits: 2 })}%
-                                            </div>
-                                            <div className="text-sm flex items-center gap-2 justify-end">
-                                                <small className="italic">
-                                                    ~{(Number(formatUnits(position.performance.net_profit, data.decimals)) * Number(position.exit_price ?? quote?.price_thb.toString() ?? 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })} THB
-                                                </small>
-                                                <div>
-                                                    {Number(formatUnits(position.performance.net_profit, data.decimals)).toFixed(2)} {data.symbol}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {position.status === EPositionStatus.OPEN && (
-                                        <div className="mt-2">
-                                            <Button disabled={submitLoading} size={"sm"} onClick={() => closePosition(position.id)}>
-                                                Close Position
-                                            </Button>
-                                        </div>
-                                    )}
-                                </div>
+                                <PositionItem
+                                    key={index}
+                                    position={position}
+                                    asset={data}
+                                    quote={quote}
+                                    onClose={closePosition}
+                                    loading={submitLoading}
+                                />
                             ));
                         })()}
                     </div>
