@@ -126,7 +126,7 @@ A description for this project structure
 
 ### Get started
 1. Copy `.env.example` to `.env`, For example
-    ```
+    ```env
     NEXT_PUBLIC_API_URL="http://localhost:3000/"
     NEXT_PUBLIC_WS_URL="ws://localhost:3001/"
     ```
