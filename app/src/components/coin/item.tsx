@@ -57,7 +57,7 @@ export default function CoinItem ({
                         <div className="italic text-xs text-slate-500">~{(coinBalance * (quote?.price_thb ?? 0)).toLocaleString(undefined, {minimumFractionDigits: 2})} THB</div>
                         <div className="font-bold">
                             {(() => {
-                                if (isLoading) return <LoadingText />; 
+                                if (isLoading) return '...'; 
                                 const formattedBalance = coinBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
                                 return [formattedBalance, symbol].join(' ');
                             })()}
@@ -74,13 +74,13 @@ export default function CoinItem ({
                                     if (!quote || quote?.percent_change === 0) return null;
                                     return quote?.percent_change > 0 ? '+' : '';
                                 })(),
-                                quote?.percent_change.toFixed(2) ?? '0.00',
+                                quote?.percent_change.toLocaleString(undefined, {minimumFractionDigits: 2}) ?? '0.00',
                                 '%'
                             ];
                             return <small className={["font-bold", className].join(" ")}>{fragments.join('')}</small>;
                         })()}
                         {(() => {
-                            const formattedPrice = (_quote?.price_thb ?? 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+                            const formattedPrice = (Number(_quote?.price_thb ?? 0)).toLocaleString(undefined, {minimumFractionDigits: 2});
                             return [formattedPrice, currency].join(' ');
                         })()}
                     </div>

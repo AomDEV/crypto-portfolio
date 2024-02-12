@@ -3,6 +3,7 @@ import CoinItem from "@/components/coin/item";
 import { LoadingText, NoDataText } from "@/components/loading";
 import Paginator from "@/components/paginator";
 import usePaginator from "@/components/paginator/hooks";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAssets } from "@/hooks/asset/get-all";
 import { Fragment } from "react";
 
@@ -15,7 +16,15 @@ export default function Page () {
     });
     const { currentPage } = usePaginator({fetch})
 
-    if (isLoading) return <LoadingText />;
+    if (isLoading) return new Array(10).fill(null).map((_, index) => (
+        <div key={index} className="flex my-2 items-center gap-2 h-[62px] border rounded-lg p-2">
+            <div>
+                <Skeleton className="rounded-full h-[32px] w-[32px]" />
+            </div>
+            <Skeleton className="w-full h-8" />
+            <Skeleton className="w-32 h-8" />
+        </div>
+    ));
     if (noData) return <NoDataText />;
     return (
         <Fragment>
