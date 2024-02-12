@@ -26,6 +26,9 @@
     "prisma:push": "prisma db push"
   },
   "dependencies": {
+    "@bull-board/api": "^5.14.0",
+    "@bull-board/express": "^5.14.0",
+    "@bull-board/nestjs": "^5.14.0",
     "@nestjs/bull": "^10.1.0",
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/common": "^10.3.2",
