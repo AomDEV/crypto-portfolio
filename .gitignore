@@ -46,3 +46,8 @@ build/
 
 .vercel
 next-env.d.ts
+
+# Docker CLI
+docker-compose.dist.yml
+api/Dockerfile
+app/Dockerfile
