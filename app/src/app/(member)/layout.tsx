@@ -18,7 +18,7 @@ export default function MemberLayout({
         }
     }, []);
     return (
-        <main className="min-h-screen flex flex-col justify-center items-center">
+        <main className="min-h-screen flex flex-col justify-center items-center m-2">
             <div className="w-full max-w-xl">
                 <div className="mb-2">
                     <div className="text-center mb-2">
