@@ -23,6 +23,9 @@ export default function RootLayout({
 					{children}
 				</SseProvider>
 				<Toaster />
+				<footer className="text-center text-muted-foreground text-sm m-2">
+					&copy; 2024 - Siriwat Janke
+				</footer>
 			</body>
 		</html>
 	);
