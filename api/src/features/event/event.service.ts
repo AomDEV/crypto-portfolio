@@ -37,10 +37,13 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
         return this.eventEmitter.emit(name, data);
     }
 
-    @Cron(CronExpression.EVERY_30_SECONDS, {})
+    @Cron(CronExpression.EVERY_MINUTE, {})
     async getQuotes () {
         // send to queue `fetch-quote`
-        const job = await this.fetchQuoteQueue.add(FETCH_QUOTE, {}, {});
+        const job = await this.fetchQuoteQueue.add(FETCH_QUOTE, {}, {
+            attempts: 3,
+            removeOnFail: true
+        });
         if (!job) return;
         this.logger.debug(`Emitting '${job.name}' with job #${job.id}`);
     }
@@ -48,7 +51,10 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
     @Cron(CronExpression.EVERY_HOUR, {})
     async getRates () {
         // send to queue `fetch-rate`
-        const job = await this.fetchRateQueue.add(FETCH_RATE, {}, {});
+        const job = await this.fetchRateQueue.add(FETCH_RATE, {}, {
+            attempts: 3,
+            removeOnFail: true
+        });
         if (!job) return;
         this.logger.debug(`Emitting '${job.name}' with job #${job.id}`);
     }
