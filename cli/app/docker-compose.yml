@@ -1,0 +1,18 @@
+version: "3.7"
+services:
+  app:
+    container_name: app-web
+    restart: always
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "3333:3000"
+    networks:
+      - caddy
+    labels:
+      caddy: app-web.domain.com
+      caddy.reverse_proxy: "{{ upstreams 3000 }}"
+networks:
+  caddy:
+    external: true
