@@ -4,8 +4,8 @@ import { NestMiddleware } from "@nestjs/common";
 import { Response } from "express";
 
 export function middleware(req: NestRequest, res: Response, next: Function) {
-    const username = process.env.BULL_BOARD_USERNAME;
-    const password = process.env.BULL_BOARD_PASSWORD;
+    const username = process.env.BULL_BOARD_USERNAME ?? "admin";
+    const password = process.env.BULL_BOARD_PASSWORD ?? "admin";
 
     if (!username || !password) return next();
 
