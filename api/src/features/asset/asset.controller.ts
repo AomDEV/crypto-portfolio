@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Post, Query } from "@nestjs/common";
-import { CacheKey, CacheTTL } from "@nestjs/cache-manager";
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { CoinListingUsecase } from "./usecases/coin-listing.usecase";
 import { ZERO_UUID } from "@/common/constants/uuid";
@@ -33,8 +32,6 @@ export class AssetController {
     @ApiOperation({ summary: 'Get coin listing' })
     @ApiQuery({ name: 'page', required: true, type: Number, example: 1 })
     @ApiQuery({ name: 'limit', required: true, type: Number, example: 10 })
-    @CacheKey('listing')
-    @CacheTTL(60*1000)
     async listing (
         @Query('page', ParseIntPipe) page: number,
         @Query('limit', ParseIntPipe) limit: number,

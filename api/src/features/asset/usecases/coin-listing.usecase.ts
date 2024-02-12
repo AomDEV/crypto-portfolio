@@ -1,5 +1,6 @@
 import { BaseUsecase } from "@/common/shared/usecase";
-import { Injectable } from "@nestjs/common";
+import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager";
+import { Inject, Injectable } from "@nestjs/common";
 
 type CoinListingUsecaseProps = {
     page: number;
@@ -8,7 +9,9 @@ type CoinListingUsecaseProps = {
 
 @Injectable()
 export class CoinListingUsecase extends BaseUsecase<Promise<any>> {
-    constructor() {
+    constructor(
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+    ) {
         super();
     }
 
@@ -16,6 +19,10 @@ export class CoinListingUsecase extends BaseUsecase<Promise<any>> {
         page,
         limit
     }: CoinListingUsecaseProps) {
+        const CACHE_KEY = `${CoinListingUsecase.name}:${page}:${limit}`;
+        const cacheValues = await this.cacheManager.get(CACHE_KEY);
+        if (cacheValues) return cacheValues;
+         
         const [data, meta] = await this.pagination.asset.paginate({
             where: {
                 deleted_at: null,
@@ -38,7 +45,7 @@ export class CoinListingUsecase extends BaseUsecase<Promise<any>> {
                 rank: "asc"
             },
         }).withPages({page, limit})
-        return {
+        const response = {
             data: data.map(asset => ({
                 ...asset,
                 quotes: undefined,
@@ -46,5 +53,7 @@ export class CoinListingUsecase extends BaseUsecase<Promise<any>> {
             })),
             meta
         }
+        await this.cacheManager.set(CACHE_KEY, response, 60 * 1000);
+        return response;
     }
 }
