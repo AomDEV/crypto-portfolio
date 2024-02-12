@@ -50,27 +50,27 @@ A description for this project structure
 1. Copy `.env.example` to `.env`, For example
     ```env
     # Database connection string
-    DATABASE_URL=postgres://postgres:password@123.123.123.123:5432/db
+    DATABASE_URL="postgres://postgres:password@123.123.123.123:5432/db"
 
     # Json Web Token
-    JWT_SECRET=secret
+    JWT_SECRET="secret"
 
     # CoinCap API
     COINCAP_API_URL="https://api.coincap.io/"
 
     # CoinMarketCap API
     CMC_API_URL="https://pro-api.coinmarketcap.com/"
-    CMC_API_KEY=api_key
+    CMC_API_KEY="api_key"
 
     # Open Exchange Rates API
     OXR_API_URL="https://openexchangerates.org/"
-    OXR_APP_ID=api_key
+    OXR_APP_ID="api_key"
 
     # Redis Database
-    REDIS_HOST=123.123.123.123
-    REDIS_PORT=6379
-    REDIS_USERNAME=default
-    REDIS_PASSWORD=password
+    REDIS_HOST="123.123.123.123"
+    REDIS_PORT="6379"
+    REDIS_USERNAME="default"
+    REDIS_PASSWORD="password"
     ```
 2. Install dependencies
     ```bash
@@ -127,8 +127,8 @@ A description for this project structure
 ### Get started
 1. Copy `.env.example` to `.env`, For example
     ```
-    NEXT_PUBLIC_API_URL=http://localhost:3000/
-    NEXT_PUBLIC_WS_URL=ws://localhost:3001/
+    NEXT_PUBLIC_API_URL="http://localhost:3000/"
+    NEXT_PUBLIC_WS_URL="ws://localhost:3001/"
     ```
 2. Install dependencies
     ```bash
