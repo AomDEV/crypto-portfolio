@@ -8,19 +8,20 @@ import {
 	PaginationPrevious as Prev,
 } from "@/components/ui/pagination"
 import { createPagination } from "./helper";
-import { Fragment, useCallback } from "react";
+import { Fragment, useCallback, useMemo } from "react";
 import { CreatePaginationHelperMetadata, PaginatorProps } from "./types";
 import { usePagination } from "./hooks";
 
 export default function Paginator({
 	children,
-	currentPage = 1,
+	currentPage: _currentPage = 1,
 	totalPages,
 	totalItems,
 	perPage,
 	setCurrentPage,
 	noMeta = false,
 }: PaginatorProps) {
+	const currentPage = useMemo(() => _currentPage, [_currentPage]);
 	const {
 		goToPage,
 		onNextPage,

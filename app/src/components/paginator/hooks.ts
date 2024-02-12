@@ -46,6 +46,7 @@ function usePaginator({ fetch, defaultPage }: UsePaginatorProps) {
 	
 	useEffect(() => {
 		const page = parseInt(searchParams.get('page')?.toString() ?? "1");
+		setCurrentPage(page);
 		if (typeof fetch === "function") fetch(page);
 	}, [fetch, searchParams]);
 
