@@ -69,7 +69,7 @@ function OpenPositionDialog({
         },
     })
     const updateAmountPercentage = useCallback((value: string) => {
-        form.setValue('amount', Number(formatUnits(value, decimals)).toFixed(2))
+        form.setValue('amount', Number(toReadable(value, decimals)).toFixed(2))
     }, [form, decimals]);
     const { quote } = useQuote({ assetId, defaultQuote })
 
